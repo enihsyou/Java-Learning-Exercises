@@ -11,7 +11,6 @@ public class shop {
 
     static void addTannka(ArrayList tannka, Scanner scanner) {
         try {
-            //tannka
             System.out.print("单价: ");
             tannka.add(Double.parseDouble(scanner.next()));
         } catch (Exception notANumber) {
@@ -22,7 +21,6 @@ public class shop {
 
     static void addRyou(ArrayList ryou, Scanner scanner) {
         try {
-            //suuryou
             System.out.print("数量: ");
             ryou.add(Integer.parseInt(scanner.next()));
         } catch (Exception notANumber) {
@@ -47,7 +45,6 @@ public class shop {
         System.out.println("分别输入商品名，单价和数量。输入q输出结果");
 
         while (true) {
-            //syouhinnmei
             System.out.print("商品名: ");
             if (scanner.hasNext("q")) {
                 break;
