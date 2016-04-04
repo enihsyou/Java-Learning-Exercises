@@ -1,5 +1,5 @@
 import java.text.MessageFormat;
-import java.util.Scanner;
+        import java.util.Scanner;
 
 /**
  * Created by enihsyou on 16/3/30.
@@ -16,6 +16,5 @@ public class Piecewise {
             }
             System.out.println(MessageFormat.format("{0,number}", tmp));
         }
-
     }
 }

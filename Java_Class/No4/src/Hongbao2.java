@@ -2,6 +2,7 @@
  * Created by enihsyou on 16/3/30.
  */
 
+import java.util.Random;
 import java.util.Scanner;
 import java.text.MessageFormat;
 import java.text.DecimalFormat;
@@ -10,11 +11,11 @@ public class Hongbao2 {
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
         DecimalFormat decimalFormat = new DecimalFormat("#.##");
+        System.out.println("输入1: 一般红包\n输入2: 拼手气红包\n输入3: 口令红包");
         switch (scanner.nextInt()) {
             case 1:
-                String name;
                 double sumNumber;
-                int number = 0;
+                int number;
                 double averageNumber;
 
                 System.out.println("多少钱: ");
@@ -30,19 +31,20 @@ public class Hongbao2 {
                 break;
             case 2:
                 System.out.println("多少钱: ");
-                sumNumber = scanner.nextDouble();
-                double money = sumNumber;
+                int total = (int) (scanner.nextDouble() * 100); //总数
                 System.out.println("多少个红包: ");
-                number = scanner.nextInt();
+                number = scanner.nextInt(); //个数
+                int money[] = new int[number];
+                Random random = new Random();
+
+                System.out.println();
+                for (int i = 0; i < total; i++) {
+                    int choice = (int)(10000000*random.nextFloat()) % number;
+                    random.setSeed(random.nextLong());
+                    money[choice] += 1;
+                }
                 for (int i = 0; i < number; i++) {
-                    int a = (int) (Math.random() * number * 10 * (money / sumNumber));
-                    if (i == number - 1) {
-                        a = (int) money;
-
-                    }
-                    System.out.println(MessageFormat.format("红包{0}: {1}元", i, decimalFormat.format(a)));
-
-                    money -= a;
+                    System.out.println(MessageFormat.format("红包{0}: {1}元", i + 1, decimalFormat.format(money[i] / 100.0)));
                 }
                 break;
             case 3:
@@ -50,17 +52,14 @@ public class Hongbao2 {
                 String cipher = scanner.next();
                 System.out.println("多少钱: ");
                 sumNumber = scanner.nextDouble();
+
                 System.out.println("输入口令: ");
                 if (scanner.next().equals(cipher)) {
                     System.out.println(MessageFormat.format("口令正确！红包: {0}元", sumNumber));
-
                 } else {
                     System.out.println("口令错误！");
                 }
                 break;
-
         }
-
-
     }
 }

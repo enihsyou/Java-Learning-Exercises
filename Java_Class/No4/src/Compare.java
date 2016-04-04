@@ -42,8 +42,6 @@ public class Compare {
                 i = j;
             }
         }
-
         System.out.println(MessageFormat.format("{0}的最低价格在{1} {2,number}", name, names[i], price[i]));
-
     }
 }
