@@ -94,12 +94,6 @@ $RECYCLE.BIN/
 ### Example user template template
 ### Example user template
 
-# IntelliJ project files
-.idea
-*.iml
-out
-gen### Java template
-*.class
 
 # Mobile Tools for Java (J2ME)
 .mtj.tmp/
@@ -157,3 +151,13 @@ crashlytics.properties
 crashlytics-build.properties
 fabric.properties
 
+No1/01.rap
+No1/02.rap
+"No3/\347\254\2543\346\254\241JAVA\350\257\255\350\250\200\344\275\234\344\270\2321517440121.docx"
+"No4/JAVA\344\275\234\344\270\2324.docx"
+"No4/\347\254\2544\346\254\241JAVA\350\257\255\350\250\200\344\275\234\344\270\2321517440121.docx"
+"No6/\347\254\2546\346\254\241JAVA\350\257\255\350\250\200\344\275\234\344\270\2321517440121.doc"
+"No7.5/java\346\250\241\346\213\237\351\242\2301.doc"
+"No7.5/java\346\250\241\346\213\237\351\242\2302.doc"
+"No7/\347\254\2547\346\254\241JAVA\350\257\255\350\250\200\344\275\234\344\270\2321517440121.zip"
+src/
