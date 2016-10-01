@@ -1,6 +1,9 @@
-import org.omg.PortableInterceptor.SYSTEM_EXCEPTION;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Scanner;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
-import java.util.*;
 
 class question2 {
     String a;
@@ -28,16 +31,24 @@ class question2 {
     }
 
     void n3() {
-        String[] b = this.a.split(" ");
+//        String[] b = this.a.split(" ");
+
+
         int number = 0;
-        for (String i : b) {
-            if (i.matches("[a-z]+")) {
-                number++;
-                this.d.add(i);
-            };
+//        for (String i : b) {
+//            if (i.matches("[a-z]+")) {
+//                number++;
+//                this.d.add(i);
+//            };
+//        }
+
+        Pattern found_word = Pattern.compile("\\b([a-z]+(?:[-_]?[a-z])*)\\b");
+        Matcher found = found_word.matcher(this.a); //this.a type: String
+        while(found.find()) {
+            number++;
+            System.out.print(found.group());
+            System.out.print(" ");
         }
-
-
         System.out.printf("有%d个小写单词\n",number);
     }
     void n4(){
@@ -55,12 +66,12 @@ public class kaoshimoni2 {
         //要求1:
         System.out.println("要求1:");
         q.input();
-        q.print_r();
+//        q.print_r();
         //要求2:
-        System.out.println("要求2:");
-        q.cal();
+//        System.out.println("要求2:");
+//        q.cal();
         //要求3:
-        System.out.println("要求3:");
+//        System.out.println("要求3:");
         q.n3();
         //要求4:
         System.out.println("要求4:");
