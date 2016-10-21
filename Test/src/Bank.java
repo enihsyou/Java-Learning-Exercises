@@ -1,102 +1,222 @@
-import jdk.nashorn.internal.scripts.JO;
-
 import javax.swing.*;
 import javax.swing.plaf.FontUIResource;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.awt.event.*;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.*;
-import java.util.List;
 import java.util.logging.ConsoleHandler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-class Card {
-    private String userName;
-    private long cardNumber;
+import static javax.swing.JOptionPane.showInputDialog;
+
+/*存取款动作接口*/
+interface Action {
+    void deposit(BigDecimal amount);
+
+    void withdraw(BigDecimal amount);
+
+}
+
+/*卡片种类选择*/
+enum CardType {
+    信用卡("信用卡", new DebitCard()), 借记卡("借记卡", new CreditCard()), 白金卡("白金卡", new PlatinumCard());
+
+    public BaseCard getCardType() {
+        return cardType;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    private BaseCard cardType;
+
+    private String name;
+
+    CardType(String name, BaseCard cardType) {
+        this.name = name;
+        this.cardType = cardType;
+    }
+
+    @Override
+    public String toString() {
+        return name;
+    }
+
+}
+
+/*卡片基类*/
+abstract class BaseCard {
+    BigDecimal fee; //手续费
+    BigDecimal quota; ////透支限额
+
+    public BigDecimal getFee() {
+        return fee;
+    }
+
+    public BigDecimal getQuota() {
+        return quota;
+    }
+}
+
+/*借记卡*/
+class DebitCard extends BaseCard {
+    DebitCard() {
+        fee = BigDecimal.ZERO;
+        quota = BigDecimal.ZERO;
+    }
+}
+
+/*信用卡*/
+class CreditCard extends BaseCard {
+    CreditCard() {
+        fee = new BigDecimal(0.01);
+        quota = new BigDecimal(1000);
+    }
+}
+
+/*白金卡*/
+class PlatinumCard extends BaseCard {
+    PlatinumCard() {
+        fee = new BigDecimal(0.05);
+        quota = new BigDecimal(10000);
+    }
+}
+
+/*卡片主体*/
+class Card implements Action {
+    private String owner;
+    private long cardNumber; //TODO: 包装成类
     private BigDecimal balance;
     private Currency currency;
-    private String cardGrade;
+    private CardType cardGrade;
 
     Card() {
-        userName = "";
         balance = BigDecimal.ZERO;
         cardNumber = 0;
         currency = Currency.getInstance(Locale.getDefault());
-        cardGrade = "";
+        cardGrade = CardType.借记卡;
     }
 
-    Card(String userName, BigDecimal balance, long cardNumber, String cardGrade, Currency currency) {
-        this.userName = userName;
+    Card(String owner, BigDecimal balance, long cardNumber, CardType cardGrade, Currency currency) {
+        this.owner = owner;
         this.balance = balance;
         this.cardNumber = cardNumber;
         this.currency = currency;
         this.cardGrade = cardGrade;
     }
 
-    public String getUserName() {
-        return userName;
+    @Override
+    public void deposit(BigDecimal amount) {
+        BigDecimal fee = cardGrade.getCardType().getFee().multiply(amount);
+        BigDecimal total = fee.add(amount);
+        if (total.compareTo(balance) < 0) {
+            JOptionPane.showMessageDialog(null, "余额不足");
+        } else {
+            //TODO: add log
+            balance = balance.subtract(total);
+            JOptionPane.showMessageDialog(null, "操作成功");
+        }
+
     }
 
-    public long getCardNumber() {
+    @Override
+    public void withdraw(BigDecimal amount) {
+
+    }
+
+    /*获取卡片主人*/
+    public String getOwner() {
+        return owner;
+    }
+
+    /*获取卡号*/
+    long getCardNumber() {
         return cardNumber;
     }
 
-    public String getCardGrade() {
+    /*获取卡片类型*/
+    CardType getCardGrade() {
         return cardGrade;
     }
 
-    public BigDecimal getBalance() {
+    /*获取余额*/
+    BigDecimal getBalance() {
         return balance;
     }
 
-    public Currency getCurrency() {
+    void setBalance(BigDecimal money) {
+        balance = money;
+    }
+
+    /*获取币种*/
+    Currency getCurrency() {
         return currency;
     }
 
     @Override
     public String toString() {
-        return String.format("Card %s %s@%s", cardGrade, cardNumber, userName);
+        return String.format("%s %s", cardGrade.getName(), cardNumber);
     }
 }
 
+/*个人账户*/
 class Account {
-    private Card card;
+    private String userName;
+    private ArrayList<Card> cards;
     private Calendar createTime;
 
-    Account(Card card) {
-        this.card = card;
+    Account(String userName, ArrayList<Card> cards) {
+        this.userName = userName;
+        this.cards = cards;
         createTime = Calendar.getInstance();
-
     }
 
-    public Card getCard() {
-        return card;
+    Account(String userName) {
+        this.userName = userName;
+        cards = new ArrayList<>();
+        createTime = Calendar.getInstance();
+    }
+
+    /*获取卡片组*/
+    ArrayList<Card> getCards() {
+        return cards;
+    }
+
+    /*获取账户用户名*/
+    String getUserName() {
+        return userName;
+    }
+
+    void addCard(Card card) {
+        cards.add(card);
     }
 
     @Override
     public String toString() {
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        return String.format("%s created at %s", card, dateFormat.format(createTime.getTime()));
+        return userName;
     }
 }
 
+/*构建GUI*/
 class GUI extends JFrame {
     private Logger logger = Logger.getGlobal();
-    JPanel statusBar;
-    JPanel informationPanel;
-    List<Account> accounts = new ArrayList<>();
-    private String[] cardGradeList = {"信用卡", "借记卡", "白金卡"};
-    private Account current;
+    private JPanel informationPanel;
+    private ArrayList<Account> accounts = new ArrayList<>();
+    private Account currentAccount;
+    private Card currentCard;
 
-    JLabel userName = new JLabel("name");
-    JLabel cardNumber = new JLabel("number");
-    JLabel cardGrade = new JLabel("grade");
-    JLabel balance = new JLabel(Currency.getInstance(Locale.getDefault()).getSymbol() + "0");
+    private JLabel userName = new JLabel("name");
+    private JLabel cardNumber = new JLabel("number");
+    private JLabel cardGrade = new JLabel("grade");
+    private JLabel balance = new JLabel(Currency.getInstance(Locale.getDefault()).getSymbol() + "0");
+
+    SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
     GUI() {
+        setTitle("银行");
         /*设置日志*/
         ConsoleHandler handler = new ConsoleHandler();
         handler.setLevel(Level.ALL);
@@ -106,11 +226,272 @@ class GUI extends JFrame {
 
     }
 
+    /*新建 菜单*/
+    private class CreateMenu extends JMenu {
+        JMenuItem createNewAccount = new JMenuItem("创建账户");
+        JMenuItem deleteAccount = new JMenuItem("删除账户");
+        JMenuItem createNewCard = new JMenuItem("创建新卡");
+
+
+        CreateMenu() {
+            setText("账户");
+            createMenu();
+        }
+
+        private void createMenu() {
+            createNewAccount.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    JDialog dialog = createAccountDialog();
+                    dialog.setVisible(true);
+                }
+            });
+            deleteAccount.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    int result = JOptionPane.showConfirmDialog(null, String.format("真的要删除账户%s吗？", currentAccount
+                            .getUserName()), "确认删除", JOptionPane.YES_NO_OPTION);
+                    if (result == JOptionPane.OK_OPTION) {
+                        accounts.remove(currentAccount);
+                        currentAccount = null;
+                        updateStatusBar();
+                    }
+                }
+            });
+            createNewCard.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    JDialog dialog = createCardDialog();
+                    dialog.setVisible(true);
+                }
+            });
+            /*添加组件*/
+            add(createNewAccount);
+            add(deleteAccount);
+            addSeparator();
+            add(createNewCard);
+
+            createNewCard.setEnabled(false);
+        }
+
+        private JDialog createAccountDialog() {
+            JDialog dialog = new JDialog();
+            dialog.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+            dialog.setLayout(new BoxLayout(dialog.getContentPane(), BoxLayout.Y_AXIS));
+            JPanel namePanel = new JPanel(); //卡号一栏
+            JPanel buttonPanel = new JPanel(); //按钮
+
+            JLabel userNameLabel = new JLabel("姓名");
+            JTextField userName = new JTextField(20);
+
+            userNameLabel.setLabelFor(userName);
+
+            JButton confirm = new JButton("确定");
+            JButton cancel = new JButton("取消");
+            ActionListener submitUserName = new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    try {
+                        String name = userName.getText(); //输入的用户名
+
+                        //创建对象
+                        Account newAccount = new Account(name);
+                        currentAccount = newAccount;
+                        accounts.add(newAccount);
+
+                        updateStatusBar();
+                        createNewCard.setEnabled(true);
+                        logger.fine(newAccount.toString());
+                        dialog.dispose();
+                    } catch (NumberFormatException e1) {
+                        JOptionPane.showMessageDialog(dialog, "输入信息不合标准", "输入错误", JOptionPane.ERROR_MESSAGE);
+                    }
+                }
+            };
+            confirm.addActionListener(submitUserName);
+            userName.addActionListener(submitUserName);
+            cancel.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    dialog.dispose();
+                }
+            });
+
+            namePanel.add(userNameLabel);
+            namePanel.add(userName);
+
+            buttonPanel.add(confirm);
+            buttonPanel.add(cancel);
+
+            dialog.add(namePanel);
+            dialog.add(buttonPanel);
+
+            dialog.pack();
+            dialog.setLocationRelativeTo(null);
+
+            return dialog;
+        }
+
+        private JDialog createCardDialog() {
+            JDialog dialog = new JDialog();
+            dialog.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+            dialog.setLayout(new BoxLayout(dialog.getContentPane(), BoxLayout.Y_AXIS));
+            JPanel panel1 = new JPanel(); //卡号一栏
+            JPanel panel2 = new JPanel(); //姓名一栏
+            JPanel panel3 = new JPanel(); //预设余额一栏
+            JPanel panel4 = new JPanel(); //种类选择
+            JPanel panel5 = new JPanel(); //按钮
+
+            JLabel cardNumberLabel = new JLabel("卡号");
+            JTextField cardNumber = new JTextField(20);
+            JLabel userNameLabel = new JLabel("姓名");
+            JTextField userName = new JTextField(20);
+            JLabel balanceLabel = new JLabel("余额");
+            JTextField balance = new JTextField(20);
+            JLabel gradeLabel = new JLabel("卡种类");
+
+            panel4.add(gradeLabel);
+            ButtonGroup classGroup = new ButtonGroup();
+            for (CardType type : CardType.values()) {
+                JRadioButton radioButton = new JRadioButton(type.getName());
+                classGroup.add(radioButton);
+                panel4.add(radioButton);
+            }
+
+            cardNumberLabel.setLabelFor(cardNumber);
+            userNameLabel.setLabelFor(userName);
+            balanceLabel.setLabelFor(balance);
+
+            JButton confirm = new JButton("确定");
+            JButton cancel = new JButton("取消");
+
+            ActionListener submitUserName = new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    try {
+                        String name = userName.getText(); //输入的用户名
+                        BigDecimal money = new BigDecimal(balance.getText()); //输入的余额
+                        long number = Long.parseLong(cardNumber.getText()); //输入的卡号
+                        CardType cardGrade = null;
+                        for (Enumeration<AbstractButton> buttons = classGroup.getElements(); buttons.hasMoreElements
+                                (); ) {
+                            AbstractButton button = buttons.nextElement();
+                            if (button.isSelected()) {
+                                cardGrade = CardType.valueOf(button.getText());
+                                break;
+                            }
+                        }
+                        if (cardGrade == null) {
+                            throw new NumberFormatException();
+                        }
+                        //创建对象
+                        Card newCard = new Card(name, money, number, cardGrade, Currency.getInstance(Locale.getDefault()));
+                        currentAccount.addCard(newCard);
+                        currentCard = newCard;
+                        updateStatusBar();
+                        logger.fine(newCard.toString());
+                        dialog.dispose();
+                    } catch (NumberFormatException e1) {
+                        JOptionPane.showMessageDialog(dialog, "输入信息不合标准", "输入错误", JOptionPane.ERROR_MESSAGE);
+                    }
+                }
+            };
+            confirm.addActionListener(submitUserName);
+            userName.addActionListener(submitUserName);
+            cancel.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    dialog.dispose();
+                }
+            });
+
+            panel1.add(cardNumberLabel);
+            panel1.add(cardNumber);
+            panel2.add(userNameLabel);
+            panel2.add(userName);
+            panel3.add(balanceLabel);
+            panel3.add(balance);
+
+            panel5.add(confirm);
+            panel5.add(cancel);
+
+            dialog.add(panel1);
+            dialog.add(panel2);
+            dialog.add(panel3);
+            dialog.add(panel4);
+            dialog.add(panel5);
+
+            dialog.pack();
+            dialog.setLocationRelativeTo(null);
+            dialog.setModal(true);
+            return dialog;
+        }
+
+    }
+
+    /*动作 菜单*/
+    private class OperateMenu extends JMenu {
+        JMenuItem deposit = new JMenuItem("存钱");
+        JMenuItem withdraw = new JMenuItem("取钱");
+
+        OperateMenu() {
+            setText("操作");
+            createMenu();
+        }
+
+        private void createMenu() {
+            add(deposit);
+            add(withdraw);
+
+            deposit.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    if (currentAccount == null) {
+                        JOptionPane.showMessageDialog(null, "还未创建账户，操作失败", "操作失败", JOptionPane.ERROR_MESSAGE);
+                    } else {
+                        String input = JOptionPane.showInputDialog(null, "输入存款金额", "存款", JOptionPane.QUESTION_MESSAGE);
+                        BigDecimal money = new BigDecimal(input);
+                        BigDecimal balance = currentCard.getBalance();
+                        currentCard.setBalance(balance.add(money));
+                        logger.fine(String.format("%s %s 向 %s 存入%s%s", dateFormat.format(new Date()), currentAccount,
+                                                  currentCard, currentCard.getCurrency(), money));
+                        updateStatusBar();
+                    }
+                }
+            });
+            withdraw.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    if (currentAccount == null) {
+                        JOptionPane.showMessageDialog(null, "还未创建账户，操作失败", "操作失败", JOptionPane.ERROR_MESSAGE);
+                    } else {
+                        String input = showInputDialog(null, "输入取款金额", "存款", JOptionPane.QUESTION_MESSAGE);
+                        BigDecimal money = new BigDecimal(input);
+                        BigDecimal balance = currentCard.getBalance();
+                        BigDecimal newMoney = balance.subtract(money);
+                        if (newMoney.compareTo(BigDecimal.ZERO) >= 0) {
+                            logger.fine(String.format("%s %s 从 %s 取出%s%s", dateFormat.format(new Date()),
+                                                      currentAccount, currentCard, currentCard.getCurrency()
+                                                              .getCurrencyCode(), money));
+                            currentCard.setBalance(newMoney);
+                            updateStatusBar();
+
+                        } else {
+                            JOptionPane.showMessageDialog(null, "账户余额不足，操作失败", "操作失败", JOptionPane.ERROR_MESSAGE);
+                        }
+                    }
+                }
+            });
+        }
+    }
+
+    /*菜单栏 创建*/
     private JMenuBar createMenuBar() {
         JMenuBar menuBar = new JMenuBar();
-        menuBar.add(createAccountMenu());
-        menuBar.add(operateAccountMenu());
-        menuBar.add(helpMenu());
+        menuBar.add(new CreateMenu());
+        menuBar.add(new OperateMenu());
+        menuBar.add(Box.createGlue());
+        // menuBar.add(helpMenu());
         // JMenuItem exit = new JMenuItem("退出");
         // exit.addActionListener(new ActionListener() {
         //     @Override
@@ -119,165 +500,18 @@ class GUI extends JFrame {
         //     }
         // });
         // menuBar.add(exit);
+        JMenuItem about = new JMenu("关于");
+        about.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                JOptionPane.showMessageDialog(null, "作者: 黄春翔\n学号: 1517440121", "关于", JOptionPane.PLAIN_MESSAGE);
+            }
+        });
+        menuBar.add(about);
         return menuBar;
     }
 
-    private JMenu helpMenu() {
-        JMenu helpMenu = new JMenu("帮助");
-        JMenuItem about = new JMenuItem("关于");
-        helpMenu.add(about);
-        return helpMenu;
-    }
-
-    private JMenu createAccountMenu() {
-        JMenu createAccountMenu = new JMenu("账户");
-        JMenuItem create = new JMenuItem("创建账户");
-        JMenuItem delete = new JMenuItem("删除账户");
-
-        create.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                JDialog dialog = createAccountDialog();
-                dialog.setVisible(true);
-            }
-        });
-        delete.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                int result = JOptionPane.showConfirmDialog(null, String.format("真的要删除账户%s吗？", current.getCard()
-                        .getUserName()), "确认删除", JOptionPane.YES_NO_OPTION);
-                if (result == JOptionPane.OK_OPTION) {
-                    accounts.remove(current);
-                    current = null;
-                    updateStatusBar();
-                }
-            }
-        });
-
-        createAccountMenu.add(create);
-        createAccountMenu.add(delete);
-
-        return createAccountMenu;
-    }
-
-    private JDialog createAccountDialog() {
-        JDialog dialog = new JDialog();
-        dialog.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
-        dialog.setLayout(new BoxLayout(dialog.getContentPane(), BoxLayout.Y_AXIS));
-        JPanel panel1 = new JPanel();
-        JPanel panel2 = new JPanel();
-        JPanel panel3 = new JPanel();
-        JPanel panel4 = new JPanel();
-        JPanel panel5 = new JPanel();
-        JLabel cardNumberLabel = new JLabel("卡号");
-        cardNumberLabel.setFont(Font.getFont("微软雅黑"));
-        JTextField cardNumber = new JTextField(20);
-        JLabel userNameLabel = new JLabel("姓名");
-        JTextField userName = new JTextField(20);
-        JLabel balanceLabel = new JLabel("余额");
-        JTextField balance = new JTextField(20);
-
-        JLabel gradeLabel = new JLabel("卡种类");
-        panel4.add(gradeLabel);
-        ButtonGroup classGroup = new ButtonGroup();
-        for (String grade : cardGradeList) {
-            JRadioButton radioButton = new JRadioButton(grade);
-            classGroup.add(radioButton);
-            panel4.add(radioButton);
-        }
-
-        cardNumberLabel.setLabelFor(cardNumber);
-        userNameLabel.setLabelFor(userName);
-        balanceLabel.setLabelFor(balance);
-
-        JButton confirm = new JButton("确定");
-        JButton cancel = new JButton("取消");
-
-        confirm.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                try {
-                    String name = userName.getText();
-                    BigDecimal money = new BigDecimal(balance.getText());
-                    long number = Long.parseLong(cardNumber.getText());
-                    String cardGrade = cardGradeList[0];
-                    for (Enumeration<AbstractButton> buttons = classGroup.getElements(); buttons.hasMoreElements(); ) {
-                        AbstractButton button = buttons.nextElement();
-                        if (button.isSelected()) {
-                            cardGrade = button.getText();
-                        }
-                    }
-                    Card newCard = new Card(name, money, number, cardGrade, Currency.getInstance(Locale.getDefault()));
-                    Account newAccount = new Account(newCard);
-                    accounts.add(newAccount);
-                    current = newAccount;
-                    updateStatusBar();
-                    logger.fine(newAccount.toString());
-                    dialog.dispose();
-                } catch (NumberFormatException e1) {
-                    JOptionPane.showMessageDialog(dialog, "输入信息不合标准", "输入错误", JOptionPane.ERROR_MESSAGE);
-                }
-            }
-        });
-        cancel.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                dialog.dispose();
-            }
-        });
-
-        panel1.add(cardNumberLabel);
-        panel1.add(cardNumber);
-        panel2.add(userNameLabel);
-        panel2.add(userName);
-        panel3.add(balanceLabel);
-        panel3.add(balance);
-        panel5.add(confirm);
-        panel5.add(cancel);
-
-        dialog.add(panel1);
-        dialog.add(panel2);
-        dialog.add(panel3);
-        dialog.add(panel4);
-        dialog.add(panel5);
-
-        dialog.pack();
-        dialog.setLocationRelativeTo(this);
-
-        return dialog;
-    }
-    // private JDialog deleteAccountDialog() {
-    //     JDialog dialog = new JDialog();
-    //     dialog.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
-    //     dialog.setLayout(new BoxLayout(dialog.getContentPane(), BoxLayout.Y_AXIS));
-    //
-    //     dialog.pack();
-    //     dialog.setLocationRelativeTo(this);
-    //
-    //     return dialog;
-    // }
-
-    private JMenu operateAccountMenu() {
-        JMenu createAccountMenu = new JMenu("操作");
-        JMenuItem deposit = new JMenuItem("存钱");
-        JMenuItem withdraw = new JMenuItem("取钱");
-        createAccountMenu.add(deposit);
-        createAccountMenu.add(withdraw);
-
-        deposit.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                if (current == null) {
-                    return;
-                } else {
-                    JOptionPane.showInputDialog();
-                }
-            }
-        });
-
-        return createAccountMenu;
-    }
-
+    /*操作记录 GUI中部*/
     private JPanel createInformation() {
         JPanel panel = new JPanel();
         JList<Account> accountJList = new JList<>();
@@ -286,6 +520,7 @@ class GUI extends JFrame {
         return panel;
     }
 
+    /*状态栏*/
     private JPanel createStatusBar() {
         JPanel panel = new JPanel();
         panel.setBorder(BorderFactory.createLoweredBevelBorder());
@@ -319,13 +554,15 @@ class GUI extends JFrame {
         return panel;
     }
 
-    void updateStatusBar() {
-        if (current != null) {
-            Card card = current.getCard();
-            userName.setText(card.getUserName());
-            cardNumber.setText(Long.toString(card.getCardNumber()));
-            cardGrade.setText(card.getCardGrade());
-            balance.setText(card.getCurrency().getSymbol() + card.getBalance());
+    private void updateStatusBar() {
+        if (currentAccount != null) {
+            userName.setText(currentAccount.getUserName());
+            Card card = currentCard;
+            if (card != null) {
+                cardNumber.setText(Long.toString(card.getCardNumber()));
+                cardGrade.setText(card.getCardGrade().getName());
+                balance.setText(card.getCurrency().getSymbol() + card.getBalance());
+            }
         } else {
             userName.setText("姓名");
             cardGrade.setText("卡种");
@@ -347,7 +584,7 @@ class GUI extends JFrame {
         /*添加元素*/
         add(createMenuBar(), BorderLayout.NORTH);
         informationPanel = createInformation();
-        statusBar = createStatusBar();
+        JPanel statusBar = createStatusBar();
         add(informationPanel, BorderLayout.CENTER);
         add(statusBar, BorderLayout.SOUTH);
         /*设置窗口位置大小*/
