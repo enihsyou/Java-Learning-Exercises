@@ -28,7 +28,6 @@ enum CardType {
     private BaseCardType cls;
 
     CardType(String name, BaseCardType cls) {
-
         this.name = name;
         this.cls = cls;
     }
@@ -48,8 +47,8 @@ enum CardType {
 
 }
 
+/*分期*/
 enum Times {
-
     一期(1), 二期(2), 三期(3), 六期(6), 十二期(12), 二十四期(24);
     private int i;
 
@@ -121,7 +120,6 @@ class PlatinumCard extends BaseCardType {
         quota = new BigDecimal(10000);
         name = "白金卡";
     }
-
 }
 
 /*卡片主体*/
@@ -221,8 +219,9 @@ class Card implements Action {
     void addLog(String operate, BigDecimal money) {
         String dataNow = dateFormat.format(new Date());
         String balanceString = balance.setScale(2, BigDecimal.ROUND_HALF_UP).toString();
-        if (remain.compareTo(cardGrade.getQuota()) < 0)
+        if (remain.compareTo(cardGrade.getQuota()) < 0) {
             balanceString += String.format("(%s)", remain.setScale(2, BigDecimal.ROUND_HALF_UP).toString());
+        }
         tableModel.addRow(new String[]{"" + rowNumber++, dataNow, operate, money.toString(), balanceString});
     }
 
@@ -293,12 +292,12 @@ class GUI extends JFrame {
     private ArrayList<Account> accounts = new ArrayList<>();
     private Account currentAccount;
     private Card currentCard;
-
-    private JLabel userNameLabel = new JLabel(); //用户名
-    private JLabel cardGradeLabel = new JLabel(); //卡种
-    private JLabel cardNumberLabel = new JLabel(); //卡号
-    private JLabel overFlowLabel = new JLabel(); //可透支
-    private JLabel balanceLabel = new JLabel(); //余额
+    /*状态栏标签*/
+    private JLabel userNameStatusLabel = new JLabel(); //用户名
+    private JLabel cardGradeStatusLabel = new JLabel(); //卡种
+    private JLabel cardNumberStatusLabel = new JLabel(); //卡号
+    private JLabel overFlowStatusLabel = new JLabel(); //可透支
+    private JLabel balanceStatusLabel = new JLabel(); //余额
 
     private JScrollPane informationScrollPane; //中部信息面板
     private JTable defaultTable; //默认信息模板 初始化用
@@ -322,7 +321,6 @@ class GUI extends JFrame {
         JMenuItem selectCard = new JMenuItem("选择卡片");
         JMenuItem deleteCard = new JMenuItem("删除卡片");
 
-
         CreateMenu() {
             setText("账户");
             createMenu();
@@ -333,9 +331,8 @@ class GUI extends JFrame {
             createAccount.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    String optionPane = ((String) JOptionPane.showInputDialog(GUI.super.getRootPane(), "姓名", "创建账号",
-                                                                              JOptionPane.PLAIN_MESSAGE, null, null,
-                                                                              null)).trim();
+                    String optionPane = ((String) JOptionPane.showInputDialog(
+                            GUI.super.getRootPane(), "姓名", "创建账号", JOptionPane.PLAIN_MESSAGE, null, null, null)).trim();
                     if (!optionPane.isEmpty()) {
                         try {
                             Account newAccount = new Account(optionPane);//创建对象
@@ -379,8 +376,9 @@ class GUI extends JFrame {
                 @Override
                 public void actionPerformed(ActionEvent e) {
                     try {
-                        int result = JOptionPane.showConfirmDialog(GUI.super.getRootPane(), String.format
-                                ("真的要删除账户%s吗？", currentAccount.getUserName()), "确认删除", JOptionPane.YES_NO_OPTION);
+                        int result = JOptionPane.showConfirmDialog(GUI.super.getRootPane(),
+                                String.format("真的要删除账户%s吗？", currentAccount.getUserName()), "确认删除",
+                                JOptionPane.YES_NO_OPTION);
                         if (result == JOptionPane.OK_OPTION) {
                             accounts.remove(currentAccount);
                             currentCard = null;
@@ -426,8 +424,9 @@ class GUI extends JFrame {
                 @Override
                 public void actionPerformed(ActionEvent e) {
                     try {
-                        int result = JOptionPane.showConfirmDialog(GUI.super.getRootPane(), String.format
-                                ("真的要删除卡片%s吗？", currentCard.getCardNumber()), "确认删除", JOptionPane.YES_NO_OPTION);
+                        int result = JOptionPane.showConfirmDialog(GUI.super.getRootPane(),
+                                String.format("真的要删除卡片%s吗？", currentCard.getCardNumber()), "确认删除",
+                                JOptionPane.YES_NO_OPTION);
                         if (result == JOptionPane.OK_OPTION) {
                             currentCard = currentAccount.removeCard(currentCard);
                             logger.fine("删除卡片" + currentCard);
@@ -453,15 +452,12 @@ class GUI extends JFrame {
             dialog.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
             dialog.setLayout(new BoxLayout(dialog.getContentPane(), BoxLayout.Y_AXIS));
             JPanel panel1 = new JPanel(); //卡号一栏
-            JPanel panel2 = new JPanel(); //姓名一栏
             JPanel panel3 = new JPanel(); //预设余额一栏
             JPanel panel4 = new JPanel(); //种类选择
             JPanel panel5 = new JPanel(); //按钮
 
             JLabel cardNumberLabel = new JLabel("卡号");
             JTextField cardNumber = new JTextField(20);
-            JLabel userNameLabel = new JLabel("姓名");
-            JTextField userName = new JTextField(20);
             JLabel balanceLabel = new JLabel("余额");
             JTextField balanceField = new JTextField(20);
             JLabel gradeLabel = new JLabel("卡种类");
@@ -475,7 +471,6 @@ class GUI extends JFrame {
             }
 
             cardNumberLabel.setLabelFor(cardNumber);
-            userNameLabel.setLabelFor(userName);
             balanceLabel.setLabelFor(balanceField);
 
             JButton confirm = new JButton("确定");
@@ -485,9 +480,8 @@ class GUI extends JFrame {
                 @Override
                 public void actionPerformed(ActionEvent e) {
                     try {
-                        String name = userName.getText(); //输入的用户名
-                        BigDecimal money = new BigDecimal(balanceField.getText()); //输入的余额
                         long number = Long.parseLong(cardNumber.getText()); //输入的卡号
+                        BigDecimal money = new BigDecimal(balanceField.getText()); //输入的余额
                         BaseCardType cardGrade = null;
                         for (Enumeration<AbstractButton> buttons = classGroup.getElements(); buttons.hasMoreElements
                                 (); ) {
@@ -497,9 +491,7 @@ class GUI extends JFrame {
                                 break;
                             }
                         }
-                        if (cardGrade == null) {
-                            throw new NumberFormatException();
-                        }
+                        if (cardGrade == null) throw new NumberFormatException();
                         //创建对象
                         Card newCard = new Card(money, number, cardGrade, Currency.getInstance(Locale.getDefault()));
                         currentAccount.addCard(newCard);
@@ -515,7 +507,6 @@ class GUI extends JFrame {
                 }
             };
             confirm.addActionListener(submitUserName);
-            userName.addActionListener(submitUserName);
             cancel.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
@@ -525,8 +516,6 @@ class GUI extends JFrame {
 
             panel1.add(cardNumberLabel);
             panel1.add(cardNumber);
-            panel2.add(userNameLabel);
-            panel2.add(userName);
             panel3.add(balanceLabel);
             panel3.add(balanceField);
 
@@ -534,7 +523,6 @@ class GUI extends JFrame {
             panel5.add(cancel);
 
             dialog.add(panel1);
-            dialog.add(panel2);
             dialog.add(panel3);
             dialog.add(panel4);
             dialog.add(panel5);
@@ -553,14 +541,9 @@ class GUI extends JFrame {
                 selectCard.setEnabled(false);
                 deleteCard.setEnabled(false);
             } else if (currentCard == null) { //创建了账号但是没有卡片
-                if (!accounts.isEmpty()) {
-                    selectAccount.setEnabled(true);
-                }
-                // selectAccount.setEnabled(true);
+                if (!accounts.isEmpty()) selectAccount.setEnabled(true);
                 deleteAccount.setEnabled(true);
                 createCard.setEnabled(true);
-                // selectCard.setEnabled(false);
-                // deleteCard.setEnabled(false);
                 if (currentAccount.getCards().isEmpty()) {
                     informationScrollPane.setViewportView(defaultTable);
                     deleteCard.setEnabled(false);
@@ -574,8 +557,6 @@ class GUI extends JFrame {
                 selectCard.setEnabled(true);
                 deleteCard.setEnabled(true);
             }
-
-
         }
     }
 
@@ -604,20 +585,15 @@ class GUI extends JFrame {
                         showMessageDialog(GUI.super.getRootPane(), "还未创建账户或卡，操作失败", "操作失败", JOptionPane.ERROR_MESSAGE);
                     } else {
                         String input = JOptionPane.showInputDialog(GUI.super.getRootPane(), "输入存款金额", operate,
-                                                                   JOptionPane.QUESTION_MESSAGE);
-                        BigDecimal money;
-                        if (input == null) {
-                            return;
-                        }
+                                JOptionPane.QUESTION_MESSAGE);
+                        if (input == null) return;
                         try {
-
-                            money = new BigDecimal(input);
+                            BigDecimal money = new BigDecimal(input);
+                            currentCard.deposit(money);
+                            currentCard.addLog(operate, money);
                         } catch (NullPointerException | NumberFormatException ignored) {
                             showMessageDialog(GUI.super.getRootPane(), "操作失败", "失败", JOptionPane.ERROR_MESSAGE);
-                            return;
                         }
-                        boolean status = currentCard.deposit(money);
-                        if (status) currentCard.addLog(operate, money);
                         updateStatus();
                     }
                 }
@@ -630,21 +606,17 @@ class GUI extends JFrame {
                     if (currentCard == null) {
                         showMessageDialog(GUI.super.getRootPane(), "还未创建账户或卡，操作失败", "操作失败", JOptionPane.ERROR_MESSAGE);
                     } else {
-                        String input = showInputDialog(GUI.super.getRootPane(), "输入取款金额", operate, JOptionPane
-                                .QUESTION_MESSAGE);
-                        BigDecimal money;
-                        if (input == null) {
-                            return;
-                        }
+                        String input = showInputDialog(
+                                GUI.super.getRootPane(), "输入取款金额", operate, JOptionPane.QUESTION_MESSAGE);
+                        if (input == null) return;
                         try {
-                            money = new BigDecimal(input);
+                            BigDecimal money = new BigDecimal(input);
+                            boolean status = currentCard.withdraw(money);
+                            if (status) currentCard.addLog(operate, money);
+                            else showMessageDialog(null, "账户余额不足，操作失败", "操作失败", JOptionPane.ERROR_MESSAGE);
                         } catch (NullPointerException | NumberFormatException ignored) {
                             showMessageDialog(GUI.super.getRootPane(), "操作失败", "失败", JOptionPane.ERROR_MESSAGE);
-                            return;
                         }
-                        boolean status = currentCard.withdraw(money);
-                        if (status) currentCard.addLog(operate, money);
-                        else showMessageDialog(null, "账户余额不足，操作失败", "操作失败", JOptionPane.ERROR_MESSAGE);
                         updateStatus();
                     }
                 }
@@ -662,9 +634,7 @@ class GUI extends JFrame {
                         JLabel label2 = new JLabel("预计支付期数");
                         JTextField textField = new JTextField(7);
                         JComboBox<Times> list = new JComboBox<>(Times.values());
-                        if (currentCard.getCardGrade().equals(CardType.借记卡.getGrade())) {
-                            list.setEnabled(false);
-                        }
+                        if (currentCard.getCardGrade().equals(CardType.借记卡.getGrade())) list.setEnabled(false);
                         list.setSelectedIndex(0); //默认选上第一个
                         label1.setLabelFor(textField);
                         JPanel panel1 = new JPanel();
@@ -676,31 +646,28 @@ class GUI extends JFrame {
                         panel.add(panel1);
                         panel.add(panel2);
                         if (JOptionPane.OK_OPTION == JOptionPane.showConfirmDialog(GUI.super.getRootPane(), panel,
-                                                                                   operate, OK_CANCEL_OPTION)) {
+                                operate, OK_CANCEL_OPTION)) {
                             try {
                                 String input = textField.getText();
-                                BigDecimal money;
                                 int times = ((Times) list.getSelectedItem()).getTimes();
-                                money = new BigDecimal(input);
+                                BigDecimal money = new BigDecimal(input);
                                 boolean status = currentCard.withdraw(money, times);
-                                if (times > 1) {
-                                    operate = String.format("消费(分%d期)", times);
+                                if (times > 1) operate = String.format("消费(分%d期)", times);
+                                if (status) {
+                                    currentCard.addLog(
+                                            operate, money.divide(new BigDecimal(times), BigDecimal.ROUND_HALF_UP));
+                                } else {
+                                    showMessageDialog(null, "账户余额不足，操作失败", "操作失败", JOptionPane.ERROR_MESSAGE);
                                 }
-                                if (status)
-                                    currentCard.addLog(operate, money.divide(new BigDecimal(times), BigDecimal
-                                            .ROUND_HALF_UP));
-
-                                updateStatus();
                             } catch (NullPointerException | NumberFormatException ignored) {
                                 showMessageDialog(GUI.super.getRootPane(), "操作失败", "失败", JOptionPane.ERROR_MESSAGE);
                             }
+                            updateStatus();
                         }
                     }
-
                 }
             });
         }
-
     }
 
     /*菜单栏 创建*/
@@ -745,26 +712,25 @@ class GUI extends JFrame {
         panel.setBorder(BorderFactory.createLoweredBevelBorder()); //边框
         GridBagLayout layout = new GridBagLayout();
         panel.setLayout(layout);
-        panel.add(userNameLabel);
-        panel.add(cardGradeLabel);
-        panel.add(cardNumberLabel);
+        panel.add(userNameStatusLabel);
+        panel.add(cardGradeStatusLabel);
+        panel.add(cardNumberStatusLabel);
         JLabel padding = new JLabel();
         panel.add(padding);
-        panel.add(overFlowLabel);
-        panel.add(balanceLabel);
+        panel.add(overFlowStatusLabel);
+        panel.add(balanceStatusLabel);
         GridBagConstraints c = new GridBagConstraints();
         c.fill = GridBagConstraints.HORIZONTAL;
         c.gridwidth = 1;
         c.ipadx = 10;
-        layout.setConstraints(userNameLabel, c);
-        layout.setConstraints(cardGradeLabel, c);
-        layout.setConstraints(cardNumberLabel, c);
+        layout.setConstraints(userNameStatusLabel, c);
+        layout.setConstraints(cardGradeStatusLabel, c);
+        layout.setConstraints(cardNumberStatusLabel, c);
         c.weightx = 1;
         layout.setConstraints(padding, c);
         c.weightx = 0;
-        c.gridwidth = 1;
-        layout.setConstraints(overFlowLabel, c);
-        layout.setConstraints(balanceLabel, c);
+        layout.setConstraints(overFlowStatusLabel, c);
+        layout.setConstraints(balanceStatusLabel, c);
 
         panel.setSize(getWidth(), 60);
 
@@ -777,25 +743,25 @@ class GUI extends JFrame {
         if (currentCard != null) {
             informationScrollPane.setViewportView(currentCard.getTable());
         }
-        userNameLabel.setText("姓名");
-        cardGradeLabel.setText("卡种");
-        cardNumberLabel.setText("卡号");
-        overFlowLabel.setText("");
-        balanceLabel.setText(Currency.getInstance(Locale.getDefault()).getSymbol() + "0");
+        userNameStatusLabel.setText("姓名");
+        cardGradeStatusLabel.setText("卡种");
+        cardNumberStatusLabel.setText("卡号");
+        overFlowStatusLabel.setText("");
+        balanceStatusLabel.setText(Currency.getInstance(Locale.getDefault()).getSymbol() + "0");
         //创建了账号
         if (currentAccount != null) {
-            userNameLabel.setText(currentAccount.getUserName());
+            userNameStatusLabel.setText(currentAccount.getUserName());
             Card card = currentCard;
             //创建了卡
             if (card != null) {
-                cardNumberLabel.setText(Long.toString(card.getCardNumber()));
-                cardGradeLabel.setText(card.getCardGrade().toString());
+                cardNumberStatusLabel.setText(Long.toString(card.getCardNumber()));
+                cardGradeStatusLabel.setText(card.getCardGrade().toString());
                 if (!CardType.借记卡.getName().equals(card.getCardGrade().toString())) { //存在可透支
-                    overFlowLabel.setText(card.getCurrency().getSymbol() + card.getRemain().setScale(2, BigDecimal
-                            .ROUND_HALF_UP));
+                    overFlowStatusLabel.setText(
+                            card.getCurrency().getSymbol() + card.getRemain().setScale(2, BigDecimal.ROUND_HALF_UP));
                 }
-                balanceLabel.setText(card.getCurrency().getSymbol() + card.getBalance().setScale(2, BigDecimal
-                        .ROUND_HALF_UP));
+                balanceStatusLabel.setText(
+                        card.getCurrency().getSymbol() + card.getBalance().setScale(2, BigDecimal.ROUND_HALF_UP));
             }
         }
     }
