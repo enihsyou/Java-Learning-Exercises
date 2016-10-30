@@ -179,7 +179,9 @@ class Card implements Action {
         BigDecimal fee = cardGrade.getFee().multiply(amount); //手续费
         BigDecimal total = fee.add(amount); //总计
         if (times > 1) {
-            total = total.divide(new BigDecimal(times), BigDecimal.ROUND_HALF_UP);
+            BigDecimal withdrawTimes = new BigDecimal(times);
+            total = total.divide(withdrawTimes, BigDecimal.ROUND_HALF_UP);
+            fee = fee.divide(withdrawTimes, BigDecimal.ROUND_HALF_UP);
             if (cardGrade instanceof DebitCard) operate = "付款";
             else operate = String.format("付款(分%d期)", times);
         } else if (times == 1) operate = "付款";
@@ -231,7 +233,7 @@ class Card implements Action {
 
     /*添加记录到自身表格 带有手续费的记录*/
     private void addLog(String operate, BigDecimal money, BigDecimal fee) {
-        addLog(operate, format(money.add(fee)) + "(" + format(fee) + ")");
+        addLog(operate, format(money) + "(" + format(fee) + ")");
     }
 
     private void addLog(String... strings) {
