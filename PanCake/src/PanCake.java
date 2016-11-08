@@ -7,7 +7,7 @@ class Pan {
     private int currentForSell;//当前库存量
     private static final int MAX_CAPACITY = 3;//库存量
     private static final int MAX_TODAY_SOLD = 20; //最大销售量
-    private boolean soldOut;
+    private boolean soldOut; //flag
 
     Pan() {
         totalSold = 0;
@@ -19,9 +19,9 @@ class Pan {
     }
 
     void makeOne() throws InterruptedException {
-        Thread.sleep(random.nextInt(3000) + 1000);
+        Thread.sleep(random.nextInt(5000) + 1000);
         synchronized (this) {
-            if (totalSold >= MAX_TODAY_SOLD) return;
+            if (totalSold + currentForSell >= MAX_TODAY_SOLD) return;
             if (currentForSell < MAX_CAPACITY) {
                 System.out.printf("%tH:%<tM:%<tS %s制作了一个，现在有%d个蛋饼了\n", new Date(), Thread.currentThread().getName(),
                         ++currentForSell);
@@ -30,7 +30,7 @@ class Pan {
     }
 
     void soldOne() throws InterruptedException {
-        Thread.sleep(random.nextInt(3000) + 1000);
+        Thread.sleep(random.nextInt(5000) + 1000);
         synchronized (this) {
             if (currentForSell > 0) {
                 System.out.printf("%tH:%<tM:%<tS %s来买了一个，盘子里剩下%d个，已经卖出%d个\n", new Date(), Thread.currentThread().getName(),
