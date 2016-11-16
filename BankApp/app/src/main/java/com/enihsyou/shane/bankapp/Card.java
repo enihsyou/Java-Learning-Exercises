@@ -2,11 +2,12 @@ package com.enihsyou.shane.bankapp;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Random;
 
 /**
  * 所有卡片的基类
  */
-public abstract class BaseCardType {
+abstract class Card {
     BigDecimal fee; //手续费，小数
     BigDecimal quota; //限额，透支额度
     String cardName; //卡片名称
@@ -106,6 +107,14 @@ public abstract class BaseCardType {
         return balance;
     }
 
+    public void setCardNumber(long cardNumber) {
+        this.cardNumber = cardNumber;
+    }
+
+    public void setBalance(BigDecimal balance) {
+        this.balance = balance;
+    }
+
     public BigDecimal getRemain() {
         return remain;
     }
@@ -116,28 +125,36 @@ public abstract class BaseCardType {
 }
 
 /*借记卡*/
-class DebitCard extends BaseCardType {
-    DebitCard() {
+class DebitCard extends Card {
+    DebitCard(double amount) {
         fee = BigDecimal.ZERO;
         quota = BigDecimal.ZERO;
         cardName = "借记卡";
+        setBalance(new BigDecimal(amount));
+        setCardNumber(new Random().nextLong());
     }
 }
 
 /*信用卡*/
-class CreditCard extends BaseCardType {
-    CreditCard() {
+class CreditCard extends Card {
+    CreditCard(double amount) {
         fee = new BigDecimal(0.01);
         quota = new BigDecimal(1000);
         cardName = "信用卡";
+        setBalance(new BigDecimal(amount));
+        setCardNumber(new Random().nextLong());
+
     }
 }
 
 /*白金卡*/
-class PlatinumCard extends BaseCardType {
-    PlatinumCard() {
+class PlatinumCard extends Card {
+    PlatinumCard(double amount) {
         fee = new BigDecimal(0.05);
         quota = new BigDecimal(10000);
         cardName = "白金卡";
+        setBalance(new BigDecimal(amount));
+        setCardNumber(new Random().nextLong());
+
     }
 }
