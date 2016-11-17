@@ -1,13 +1,14 @@
-package com.enihsyou.shane.bankapp;
+package com.enihsyou.shane.bankapp.Card;
+
+import com.enihsyou.shane.bankapp.BuildConfig;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Random;
 
 /**
  * 所有卡片的基类
  */
-abstract class Card {
+public abstract class BaseCard {
     BigDecimal fee; //手续费，小数
     BigDecimal quota; //限额，透支额度
     String cardName; //卡片名称
@@ -124,37 +125,3 @@ abstract class Card {
     }
 }
 
-/*借记卡*/
-class DebitCard extends Card {
-    DebitCard(double amount) {
-        fee = BigDecimal.ZERO;
-        quota = BigDecimal.ZERO;
-        cardName = "借记卡";
-        setBalance(new BigDecimal(amount));
-        setCardNumber(new Random().nextLong());
-    }
-}
-
-/*信用卡*/
-class CreditCard extends Card {
-    CreditCard(double amount) {
-        fee = new BigDecimal(0.01);
-        quota = new BigDecimal(1000);
-        cardName = "信用卡";
-        setBalance(new BigDecimal(amount));
-        setCardNumber(new Random().nextLong());
-
-    }
-}
-
-/*白金卡*/
-class PlatinumCard extends Card {
-    PlatinumCard(double amount) {
-        fee = new BigDecimal(0.05);
-        quota = new BigDecimal(10000);
-        cardName = "白金卡";
-        setBalance(new BigDecimal(amount));
-        setCardNumber(new Random().nextLong());
-
-    }
-}

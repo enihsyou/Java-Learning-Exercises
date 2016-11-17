@@ -1,4 +1,4 @@
-package com.enihsyou.shane.bankapp;
+package com.enihsyou.shane.bankapp.Card;
 
 import java.math.BigDecimal;
 import java.util.Calendar;
