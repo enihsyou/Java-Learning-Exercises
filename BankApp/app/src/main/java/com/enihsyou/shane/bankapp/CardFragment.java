@@ -15,7 +15,7 @@ public class CardFragment extends Fragment {
     private Card mCard;
     private android.widget.EditText mCardNumberInput;
     private android.widget.Spinner mCardTypePicker;
-    private android.widget.EditText moperateAmountInput;
+    private android.widget.EditText mOperateAmountInput;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -28,15 +28,13 @@ public class CardFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle
             savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_card, container, false);
-        this.moperateAmountInput = (EditText) view.findViewById(R.id.operate_amount_input);
+        this.mOperateAmountInput = (EditText) view.findViewById(R.id.operate_amount_input);
         this.mCardTypePicker = (Spinner) view.findViewById(R.id.card_type_picker);
         this.mCardNumberInput = (EditText) view.findViewById(R.id.card_number_input);
 
-        moperateAmountInput.addTextChangedListener(new TextWatcher() {
+        mOperateAmountInput.addTextChangedListener(new TextWatcher() {
             @Override
-            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
-            }
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) { }
 
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
@@ -44,9 +42,7 @@ public class CardFragment extends Fragment {
             }
 
             @Override
-            public void afterTextChanged(Editable editable) {
-
-            }
+            public void afterTextChanged(Editable editable) { }
         });
 
         return view;
