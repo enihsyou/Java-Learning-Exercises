@@ -11,6 +11,5 @@ public class CreditCard extends BaseCard {
         cardName = "信用卡";
         setBalance(new BigDecimal(amount));
         setCardNumber(new Random().nextLong());
-
     }
 }

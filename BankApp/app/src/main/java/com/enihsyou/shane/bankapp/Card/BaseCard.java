@@ -100,26 +100,32 @@ public abstract class BaseCard {
         return cardNumber;
     }
 
+    /*获取当前余额*/
     public BigDecimal getBalance() {
         return balance;
     }
 
+    /*设置卡号*/
     public void setCardNumber(long cardNumber) {
         this.cardNumber = cardNumber;
     }
 
+    /*设置余额*/
     public void setBalance(BigDecimal balance) {
         this.balance = balance;
     }
 
+    /*获取剩余可用额度*/
     public BigDecimal getRemain() {
         return remain;
     }
 
+    /*获取操作记录*/
     public ArrayList<CardLog> getLogArrayList() {
         return logArrayList;
     }
 
+    /*格式化货币数字*/
     public static String format(BigDecimal number) {
         return currencyFormatter.format(number);
     }

@@ -11,6 +11,5 @@ public class PlatinumCard extends BaseCard {
         cardName = "白金卡";
         setBalance(new BigDecimal(amount));
         setCardNumber(new Random().nextLong());
-
     }
 }

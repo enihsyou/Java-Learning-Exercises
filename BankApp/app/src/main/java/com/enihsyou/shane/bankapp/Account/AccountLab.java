@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.UUID;
 
 public class AccountLab {
-    private static AccountLab sAccountLab;
+    private static AccountLab sAccountLab; //作为单例
 
     private ArrayList<Account> mAccounts;
 
@@ -17,7 +17,7 @@ public class AccountLab {
 
     private AccountLab(Context context) {
         mAccounts = new ArrayList<>();
-        for (int i = 0; i < 100; i++) {
+        for (int i = 0; i < 100; i++) { // TODO: 16/11/18 018 创建账户的界面
             Account account = new Account("#" + i);
             mAccounts.add(account);
         }
