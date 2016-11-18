@@ -21,4 +21,15 @@ public class CardLab {
             mCards.add(card);
         }
     }
+
+    public ArrayList<BaseCard> getCards() {
+        return mCards;
+    }
+
+    public BaseCard getCard(long cardNumber) {
+        for (BaseCard card : mCards) {
+            if (card.getCardNumber() == cardNumber) return card;
+        }
+        return null;
+    }
 }

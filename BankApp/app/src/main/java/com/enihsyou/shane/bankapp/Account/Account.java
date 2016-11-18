@@ -15,6 +15,7 @@ public class Account {
 
     private UUID mAccountID;
 
+
     public Account(String accountName) {
         this.accountName = accountName;
         this.accountCards = new ArrayList<>();
@@ -22,7 +23,10 @@ public class Account {
     }
 
     public Account() {
-        new Account("");
+        // new Account("");
+        this.accountName = "Unnamed Account";
+        this.accountCards = new ArrayList<>();
+        this.mAccountID = UUID.randomUUID();
     }
 
     public ArrayList<BaseCard> getAccountCards() {

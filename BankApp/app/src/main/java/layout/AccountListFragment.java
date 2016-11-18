@@ -9,11 +9,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 import com.enihsyou.shane.bankapp.Account.Account;
 import com.enihsyou.shane.bankapp.Account.AccountLab;
 import com.enihsyou.shane.bankapp.R;
 
 import java.util.ArrayList;
+import java.util.Locale;
 
 public class AccountListFragment extends Fragment {
     private RecyclerView mAccountRecyclerView;
@@ -40,12 +42,31 @@ public class AccountListFragment extends Fragment {
         mAccountRecyclerView.setAdapter(mAccountAdapter);
     }
 
-    private class AccountHolder extends RecyclerView.ViewHolder {
-        public TextView mNameTextView;
+    private class AccountHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
+        private Account mAccount;
+
+        private TextView mAccountName;
+        private TextView mAccountCardCount;
 
         public AccountHolder(View itemView) {
             super(itemView);
-            mNameTextView = (TextView) itemView;
+            /*给变量赋值 样式对象*/
+            mAccountName = (TextView) itemView.findViewById(R.id.list_item_account_name);
+            mAccountCardCount = (TextView) itemView.findViewById(R.id.list_item_account_card_count);
+            /*设置点击监听器*/
+            itemView.setOnClickListener(this);
+        }
+
+        public void bindAccount(Account account) {
+            mAccount = account;
+            /*更新显示的内容*/
+            mAccountName.setText(String.format(Locale.getDefault(), "账户: %s", account.getAccountName()));
+            mAccountCardCount.setText(String.format(Locale.getDefault(), "卡片数量: %d", account.getAccountCards().size()));
+        }
+
+        @Override
+        public void onClick(View view) {
+            Toast.makeText(getActivity(), mAccount.getAccountName() + "Clicked", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -59,14 +80,14 @@ public class AccountListFragment extends Fragment {
         @Override
         public AccountHolder onCreateViewHolder(ViewGroup parent, int viewType) {
             LayoutInflater layoutInflater = LayoutInflater.from(getActivity());
-            View view = layoutInflater.inflate(android.R.layout.simple_list_item_1, parent, false);
+            View view = layoutInflater.inflate(R.layout.list_item_account, parent, false);
             return new AccountHolder(view);
         }
 
         @Override
         public void onBindViewHolder(AccountHolder holder, int position) {
             Account account = mAccounts.get(position);
-            holder.mNameTextView.setText(account.getAccountName());
+            holder.bindAccount(account);
         }
 
         @Override

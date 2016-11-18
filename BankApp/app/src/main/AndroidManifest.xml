@@ -24,7 +24,6 @@
         <activity
             android:name="layout.CardActivity"
             android:label="@string/card_list">
-
         </activity>
         </application>
 

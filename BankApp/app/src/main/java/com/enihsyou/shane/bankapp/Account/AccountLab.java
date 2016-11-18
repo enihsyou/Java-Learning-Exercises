@@ -18,7 +18,7 @@ public class AccountLab {
     private AccountLab(Context context) {
         mAccounts = new ArrayList<>();
         for (int i = 0; i < 100; i++) {
-            Account account = new Account("账户 #" + i);
+            Account account = new Account("#" + i);
             mAccounts.add(account);
         }
     }
