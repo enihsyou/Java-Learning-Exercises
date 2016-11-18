@@ -15,7 +15,7 @@ import com.enihsyou.shane.bankapp.Card.BaseCard;
 import com.enihsyou.shane.bankapp.Card.DebitCard;
 import com.enihsyou.shane.bankapp.R;
 
-public class CardFragment extends Fragment {
+public class CardCreateFragment extends Fragment {
     private BaseCard mCard;
 
     private EditText mCardNumberInput;

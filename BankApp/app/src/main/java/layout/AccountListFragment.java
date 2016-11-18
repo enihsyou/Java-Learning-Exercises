@@ -45,10 +45,10 @@ public class AccountListFragment extends Fragment {
     private class AccountHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
         private Account mAccount;
 
-        private TextView mAccountName;
-        private TextView mAccountCardCount;
+        private final TextView mAccountName;
+        private final TextView mAccountCardCount;
 
-        public AccountHolder(View itemView) {
+        AccountHolder(View itemView) {
             super(itemView);
             /*给变量赋值 样式对象*/
             mAccountName = (TextView) itemView.findViewById(R.id.list_item_account_name);
@@ -57,7 +57,7 @@ public class AccountListFragment extends Fragment {
             itemView.setOnClickListener(this);
         }
 
-        public void bindAccount(Account account) {
+        void bindAccount(Account account) {
             mAccount = account;
             /*更新显示的内容*/
             mAccountName.setText(String.format(Locale.getDefault(), "账户: %s", account.getAccountName()));
@@ -73,7 +73,7 @@ public class AccountListFragment extends Fragment {
     private class AccountAdapter extends RecyclerView.Adapter<AccountHolder> {
         private ArrayList<Account> mAccounts;
 
-        public AccountAdapter(ArrayList<Account> accounts) {
+        AccountAdapter(ArrayList<Account> accounts) {
             mAccounts = accounts;
         }
 

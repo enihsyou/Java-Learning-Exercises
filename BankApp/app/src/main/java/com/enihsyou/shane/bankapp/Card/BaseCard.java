@@ -3,6 +3,7 @@ package com.enihsyou.shane.bankapp.Card;
 import com.enihsyou.shane.bankapp.BuildConfig;
 
 import java.math.BigDecimal;
+import java.text.NumberFormat;
 import java.util.ArrayList;
 
 /**
@@ -17,6 +18,8 @@ public abstract class BaseCard {
     private BigDecimal balance; //余额
     private BigDecimal remain; //剩余可透支
     private ArrayList<CardLog> logArrayList; //操作历史记录
+
+    private static NumberFormat currencyFormatter = NumberFormat.getCurrencyInstance(); // TODO: 16/11/18 018 添加地区 币种
 
     /*存钱*/
     BigDecimal deposit(BigDecimal amount) {
@@ -77,29 +80,22 @@ public abstract class BaseCard {
         return total;
     }
 
-    /**
-     * @return 当前卡的手续费比例
-     */
+    /*获取手续费比例 小数*/
     public BigDecimal getFee() {
         return fee;
     }
 
-    /**
-     * @return 卡的允许限额
-     */
+    /*获取卡限额*/
     public BigDecimal getQuota() {
         return quota;
     }
 
+    /*获取卡类名*/
     public String getCardName() {
         return cardName;
     }
 
-    public void setCardName(String cardName) {
-        this.cardName = cardName;
-    }
-
-
+    /*获取卡号*/
     public long getCardNumber() {
         return cardNumber;
     }
@@ -122,6 +118,10 @@ public abstract class BaseCard {
 
     public ArrayList<CardLog> getLogArrayList() {
         return logArrayList;
+    }
+
+    public static String format(BigDecimal number) {
+        return currencyFormatter.format(number);
     }
 }
 

@@ -1,6 +1,5 @@
 package layout;
 
-
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -15,15 +14,11 @@ import android.widget.Toast;
 import com.enihsyou.shane.bankapp.Account.Account;
 import com.enihsyou.shane.bankapp.R;
 
-public class AccountFragment extends Fragment {
+public class AccountCreateFragment extends Fragment {
     private Account mAccount;
 
     private EditText mAccountNameInput;
     private Button mAccountCreateButton;
-
-    public AccountFragment() {
-        // Required empty public constructor
-    }
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -31,6 +26,7 @@ public class AccountFragment extends Fragment {
         mAccount = new Account();
     }
 
+    @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Inflate the layout for this fragment

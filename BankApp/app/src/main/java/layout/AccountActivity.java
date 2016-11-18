@@ -6,6 +6,6 @@ public class AccountActivity extends SingleFragmentActivity {
 
     @Override
     protected Fragment CreateFragment() {
-        return new AccountFragment();
+        return new AccountCreateFragment();
     }
 }

@@ -8,13 +8,7 @@ import java.util.UUID;
 public class Account {
     private String accountName;
     private ArrayList<BaseCard> accountCards;
-
-    public UUID getAccountID() {
-        return mAccountID;
-    }
-
     private UUID mAccountID;
-
 
     public Account(String accountName) {
         this.accountName = accountName;
@@ -27,6 +21,10 @@ public class Account {
         this.accountName = "Unnamed Account";
         this.accountCards = new ArrayList<>();
         this.mAccountID = UUID.randomUUID();
+    }
+
+    public UUID getAccountID() {
+        return mAccountID;
     }
 
     public ArrayList<BaseCard> getAccountCards() {
