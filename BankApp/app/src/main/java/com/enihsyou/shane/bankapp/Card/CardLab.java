@@ -9,14 +9,14 @@ public class CardLab {
 
     private ArrayList<BaseCard> mCards;
 
-    public static CardLab getCardLab(Context context) {
+    public static CardLab get(Context context) {
         if (sCardLab == null) sCardLab = new CardLab(context);
         return sCardLab;
     }
 
     private CardLab(Context context) {
         mCards = new ArrayList<>();
-        for (int i = 0; i < 100; i++) { // TODO: 16/11/18 018 创建卡片的界面 
+        for (int i = 0; i < 5; i++) { // TODO: 16/11/18 018 创建卡片的界面
             BaseCard card = new DebitCard(i);
             mCards.add(card);
         }
@@ -31,5 +31,9 @@ public class CardLab {
             if (card.getCardNumber() == cardNumber) return card;
         }
         return null;
+    }
+
+    public void addCard(BaseCard card) {
+        mCards.add(card);
     }
 }

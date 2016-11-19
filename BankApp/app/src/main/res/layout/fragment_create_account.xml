@@ -5,27 +5,15 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     tools:context="layout.AccountCreateFragment">
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/fix_input_account_name"
-        android:padding="4dp" />
     <EditText
         android:id="@+id/input_account_name"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="@string/hint_input_account_name"
-        android:padding="4dp"
-        android:layout_marginLeft="16dp"
         android:layout_marginStart="16dp"
-        android:inputType="text" />
-    <Button
-        android:id="@+id/button_create_account"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginRight="16dp"
-        android:layout_marginLeft="16dp"
         android:layout_marginEnd="16dp"
-        android:layout_marginStart="16dp"
-        android:text="@string/fix_create_new_account" />
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
+        android:inputType="text"
+        android:maxLines="1" />
 </LinearLayout>

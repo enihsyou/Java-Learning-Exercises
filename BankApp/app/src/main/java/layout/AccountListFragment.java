@@ -1,15 +1,15 @@
 package layout;
 
+import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
+import android.view.*;
 import android.widget.TextView;
-import android.widget.Toast;
 import com.enihsyou.shane.bankapp.Account.Account;
 import com.enihsyou.shane.bankapp.Account.AccountLab;
 import com.enihsyou.shane.bankapp.R;
@@ -17,9 +17,22 @@ import com.enihsyou.shane.bankapp.R;
 import java.util.ArrayList;
 import java.util.Locale;
 
+/**
+ * 展示所有的账户，使用列表方式，点击跳转到对应账户的卡片列表
+ */
 public class AccountListFragment extends Fragment {
+    private static final String TAG_CREATE_ACCOUNT = "CREATE_ACCOUNT_DIALOG";
+
+    private static final int REQUEST_CREATE_ACCOUNT = 100;
+
     private RecyclerView mAccountRecyclerView;
     private AccountAdapter mAccountAdapter;
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setHasOptionsMenu(true);
+    }
 
     @Nullable
     @Override
@@ -34,15 +47,55 @@ public class AccountListFragment extends Fragment {
         return view;
     }
 
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+        inflater.inflate(R.menu.fragment_account_list, menu); //添加菜单
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.menu_item_new_account:
+                FragmentManager manager = getFragmentManager();
+
+                Account account = new Account();
+                mAccountAdapter.mAccounts.add(account);
+
+                AccountCreateFragment dialog = AccountCreateFragment.newInstance(account);
+                dialog.setTargetFragment(AccountListFragment.this, REQUEST_CREATE_ACCOUNT);
+                dialog.show(manager, TAG_CREATE_ACCOUNT);
+
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode != Activity.RESULT_OK) return;
+        switch (requestCode) {
+            case REQUEST_CREATE_ACCOUNT:
+                Account account = (Account) data.getSerializableExtra(AccountCreateFragment.EXTRA_ACCOUNT);
+                AccountLab
+                        .get(getActivity())
+                        .getAccount(account.getAccountID())
+                        .setAccountName(account.getAccountName());
+                updateUI();
+        }
+    }
+
     private void updateUI() {
-        AccountLab accountLab = AccountLab.getAccountLab(getActivity());
+        AccountLab accountLab = AccountLab.get(getActivity());
         ArrayList<Account> accounts = accountLab.getAccounts();
 
         mAccountAdapter = new AccountAdapter(accounts);
         mAccountRecyclerView.setAdapter(mAccountAdapter);
     }
 
-    private class AccountHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
+    private class AccountHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         private Account mAccount;
 
         private final TextView mAccountName;
@@ -66,7 +119,10 @@ public class AccountListFragment extends Fragment {
 
         @Override
         public void onClick(View view) {
-            Toast.makeText(getActivity(), mAccount.getAccountName() + "Clicked", Toast.LENGTH_SHORT).show();
+            Intent intent = new Intent(getActivity(), CardListActivity.class);
+            intent.putExtra("accountID", mAccount.getAccountID());
+
+            startActivity(intent);
         }
     }
 
@@ -95,5 +151,6 @@ public class AccountListFragment extends Fragment {
             return mAccounts.size();
         }
     }
+
 }
 

@@ -2,10 +2,11 @@ package com.enihsyou.shane.bankapp.Account;
 
 import com.enihsyou.shane.bankapp.Card.BaseCard;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.UUID;
 
-public class Account {
+public class Account implements Serializable {
     private String accountName;
     private ArrayList<BaseCard> accountCards;
     private UUID mAccountID;

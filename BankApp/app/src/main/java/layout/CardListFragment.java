@@ -5,11 +5,11 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
+import android.view.*;
 import android.widget.TextView;
 import android.widget.Toast;
+import com.enihsyou.shane.bankapp.Account.Account;
+import com.enihsyou.shane.bankapp.Account.AccountLab;
 import com.enihsyou.shane.bankapp.Card.BaseCard;
 import com.enihsyou.shane.bankapp.Card.CardLab;
 import com.enihsyou.shane.bankapp.Card.DebitCard;
@@ -17,10 +17,39 @@ import com.enihsyou.shane.bankapp.R;
 
 import java.util.ArrayList;
 import java.util.Locale;
+import java.util.UUID;
 
 public class CardListFragment extends Fragment {
     private RecyclerView mCardRecyclerView;
     private CardAdapter mCardAdapter;
+    private Account mAccount; //隶属的账户
+
+    private static final String ARG_ACCOUNT_ID = "account_id";
+
+
+    public static CardListFragment newInstance(UUID accountID) {
+        Bundle args = new Bundle();
+        args.putSerializable("ARG_ACCOUNT_ID", accountID);
+
+        CardListFragment fragment = new CardListFragment();
+        fragment.setArguments(args);
+        return fragment;
+    }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        UUID accountID = (UUID) getArguments().getSerializable(ARG_ACCOUNT_ID);
+        mAccount = AccountLab.get(getActivity()).getAccount(accountID);
+
+        setHasOptionsMenu(true);
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+        inflater.inflate(R.menu.fragment_card_list, menu);
+    }
 
     @Nullable
     @Override
@@ -36,7 +65,7 @@ public class CardListFragment extends Fragment {
     }
 
     private void updateUI() {
-        CardLab cardLab = CardLab.getCardLab(getActivity());
+        CardLab cardLab = CardLab.get(getActivity());
         ArrayList<BaseCard> cards = cardLab.getCards();
 
         mCardAdapter = new CardAdapter(cards);

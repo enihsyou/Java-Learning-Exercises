@@ -5,6 +5,7 @@ import com.enihsyou.shane.bankapp.BuildConfig;
 import java.math.BigDecimal;
 import java.text.NumberFormat;
 import java.util.ArrayList;
+import java.util.UUID;
 
 /**
  * 所有卡片的基类
@@ -14,6 +15,7 @@ public abstract class BaseCard {
     BigDecimal quota; //限额，透支额度
     String cardName; //卡片名称
 
+    private UUID accountID; //隶属于哪个账户
     private long cardNumber; //TODO: 包装成类
     private BigDecimal balance; //余额
     private BigDecimal remain; //剩余可透支

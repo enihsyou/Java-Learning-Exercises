@@ -1,58 +1,64 @@
 package layout;
 
+import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.Dialog;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
-import android.text.Editable;
-import android.text.TextWatcher;
+import android.support.annotation.NonNull;
+import android.support.v4.app.DialogFragment;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.EditText;
-import android.widget.Toast;
 import com.enihsyou.shane.bankapp.Account.Account;
 import com.enihsyou.shane.bankapp.R;
 
-public class AccountCreateFragment extends Fragment {
+public class AccountCreateFragment extends DialogFragment {
     private Account mAccount;
 
     private EditText mAccountNameInput;
-    private Button mAccountCreateButton;
 
-    @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        mAccount = new Account();
+    public static final String EXTRA_ACCOUNT = "com.enihsyou.shane.bankapp.account";
+
+    private static final String ARG_CREATE_ACCOUNT = "create_account";
+
+    public static AccountCreateFragment newInstance(Account account) {
+        Bundle bundle = new Bundle();
+        bundle.putSerializable(ARG_CREATE_ACCOUNT, account);
+
+        AccountCreateFragment fragment = new AccountCreateFragment();
+        fragment.setArguments(bundle);
+        return fragment;
     }
 
-    @Nullable
+    @NonNull
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.fragment_account, container, false);
+    public Dialog onCreateDialog(Bundle savedInstanceState) {
+        final Account account = (Account) getArguments().getSerializable(ARG_CREATE_ACCOUNT);
+
+        View view = LayoutInflater.from(getActivity()).inflate(R.layout.fragment_create_account, null);
 
         mAccountNameInput = (EditText) view.findViewById(R.id.input_account_name);
-        mAccountCreateButton = (Button) view.findViewById(R.id.button_create_account);
 
-        mAccountNameInput.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {}
+        return new AlertDialog.Builder(getActivity())
+                .setView(view)
+                .setTitle(R.string.fix_create)
+                .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        account.setAccountName(mAccountNameInput.getText().toString()); //设置新建的账户的名字
+                        sendResult(Activity.RESULT_OK, account); //传回结果
+                    }
+                })
+                .create();
+    }
 
-            @Override
-            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                mAccount.setAccountName(charSequence.toString());
-            }
+    private void sendResult(int resultCode, Account account) {
+        if (getTargetFragment() == null) return;
+        Intent intent = new Intent();
+        intent.putExtra(EXTRA_ACCOUNT, account);
 
-            @Override
-            public void afterTextChanged(Editable editable) {}
-        });
-        mAccountCreateButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Toast.makeText(getActivity(), "touched", Toast.LENGTH_SHORT).show();
-            }
-        });
-        return view;
+        getTargetFragment().onActivityResult(getTargetRequestCode(), resultCode, intent);
     }
 }

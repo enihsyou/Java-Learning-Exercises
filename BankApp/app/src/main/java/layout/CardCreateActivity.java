@@ -2,7 +2,7 @@ package layout;
 
 import android.support.v4.app.Fragment;
 
-public class CardActivity extends SingleFragmentActivity {
+public class CardCreateActivity extends SingleFragmentActivity {
     @Override
     protected Fragment CreateFragment() {
         return new CardCreateFragment();

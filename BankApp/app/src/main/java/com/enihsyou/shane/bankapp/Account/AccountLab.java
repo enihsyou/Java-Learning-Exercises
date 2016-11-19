@@ -10,14 +10,14 @@ public class AccountLab {
 
     private ArrayList<Account> mAccounts;
 
-    public static AccountLab getAccountLab(Context context) {
+    public static AccountLab get(Context context) {
         if (sAccountLab == null) sAccountLab = new AccountLab(context);
         return sAccountLab;
     }
 
     private AccountLab(Context context) {
         mAccounts = new ArrayList<>();
-        for (int i = 0; i < 100; i++) { // TODO: 16/11/18 018 创建账户的界面
+        for (int i = 0; i < 5; i++) { // TODO: 16/11/18 018 创建账户的界面
             Account account = new Account("#" + i);
             mAccounts.add(account);
         }
@@ -32,5 +32,9 @@ public class AccountLab {
             if (account.getAccountID() == uuid) return account;
         }
         return null;
+    }
+
+    public void addAccount(Account account) {
+        mAccounts.add(account);
     }
 }
