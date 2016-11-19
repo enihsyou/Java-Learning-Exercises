@@ -1,15 +1,18 @@
 package com.enihsyou.shane.bankapp.Card;
 
 import java.math.BigDecimal;
-import java.util.Random;
 
 /*白金卡*/
 public class PlatinumCard extends BaseCard {
-    PlatinumCard(double amount) {
-        fee = new BigDecimal(0.05);
-        quota = new BigDecimal(10000);
-        cardName = "白金卡";
-        setBalance(new BigDecimal(amount));
-        setCardNumber(new Random().nextLong());
+    private static final int DEFAULT_QUOTA = 10000;
+    private static final double DEFAULT_FEE = 0.05;
+
+    /*初始化设置属性*/
+    public static void setProperty(BaseCard card, BigDecimal amount) {
+        card.fee = new BigDecimal(DEFAULT_FEE);
+        card.quota = new BigDecimal(DEFAULT_QUOTA);
+        card.cardName = "白金卡";
+        card.setBalance(amount);
+        card.setRemain(new BigDecimal(DEFAULT_QUOTA));
     }
 }

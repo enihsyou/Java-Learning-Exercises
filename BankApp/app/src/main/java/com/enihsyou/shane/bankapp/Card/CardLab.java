@@ -1,39 +1,28 @@
 package com.enihsyou.shane.bankapp.Card;
 
-import android.content.Context;
+import com.enihsyou.shane.bankapp.Account.Account;
 
 import java.util.ArrayList;
 
 public class CardLab {
-    private static CardLab sCardLab; //作为单例
+    private Account mAccount;
 
-    private ArrayList<BaseCard> mCards;
-
-    public static CardLab get(Context context) {
-        if (sCardLab == null) sCardLab = new CardLab(context);
-        return sCardLab;
-    }
-
-    private CardLab(Context context) {
-        mCards = new ArrayList<>();
-        for (int i = 0; i < 5; i++) { // TODO: 16/11/18 018 创建卡片的界面
-            BaseCard card = new DebitCard(i);
-            mCards.add(card);
-        }
+    public CardLab(Account account) {
+        mAccount = account;
     }
 
     public ArrayList<BaseCard> getCards() {
-        return mCards;
+        return mAccount.getAccountCards();
     }
 
     public BaseCard getCard(long cardNumber) {
-        for (BaseCard card : mCards) {
+        for (BaseCard card : mAccount.getAccountCards()) {
             if (card.getCardNumber() == cardNumber) return card;
         }
         return null;
     }
 
     public void addCard(BaseCard card) {
-        mCards.add(card);
+        mAccount.getAccountCards().add(card);
     }
 }

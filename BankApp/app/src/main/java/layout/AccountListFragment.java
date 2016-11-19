@@ -21,6 +21,8 @@ import java.util.Locale;
  * 展示所有的账户，使用列表方式，点击跳转到对应账户的卡片列表
  */
 public class AccountListFragment extends Fragment {
+    public static final String EXTRA_SHOW_ACCOUNT = "EXTRA_SHOW_ACCOUNT";
+
     private static final String TAG_CREATE_ACCOUNT = "CREATE_ACCOUNT_DIALOG";
 
     private static final int REQUEST_CREATE_ACCOUNT = 100;
@@ -48,6 +50,18 @@ public class AccountListFragment extends Fragment {
     }
 
     @Override
+    public void onResume() {
+        super.onResume();
+        updateUI();
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        // AccountLab.get(getActivity()).updateAccount();
+    }
+
+    @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
         inflater.inflate(R.menu.fragment_account_list, menu); //添加菜单
@@ -60,12 +74,10 @@ public class AccountListFragment extends Fragment {
                 FragmentManager manager = getFragmentManager();
 
                 Account account = new Account();
-                mAccountAdapter.mAccounts.add(account);
 
                 AccountCreateFragment dialog = AccountCreateFragment.newInstance(account);
                 dialog.setTargetFragment(AccountListFragment.this, REQUEST_CREATE_ACCOUNT);
                 dialog.show(manager, TAG_CREATE_ACCOUNT);
-
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -79,20 +91,17 @@ public class AccountListFragment extends Fragment {
         switch (requestCode) {
             case REQUEST_CREATE_ACCOUNT:
                 Account account = (Account) data.getSerializableExtra(AccountCreateFragment.EXTRA_ACCOUNT);
-                AccountLab
-                        .get(getActivity())
-                        .getAccount(account.getAccountID())
-                        .setAccountName(account.getAccountName());
+                mAccountAdapter.mAccounts.add(account);
                 updateUI();
         }
     }
 
     private void updateUI() {
-        AccountLab accountLab = AccountLab.get(getActivity());
-        ArrayList<Account> accounts = accountLab.getAccounts();
-
-        mAccountAdapter = new AccountAdapter(accounts);
-        mAccountRecyclerView.setAdapter(mAccountAdapter);
+        if (mAccountAdapter == null) {
+            AccountLab accountLab = AccountLab.get(getActivity());
+            mAccountAdapter = new AccountAdapter(accountLab.getAccounts());
+            mAccountRecyclerView.setAdapter(mAccountAdapter);
+        } else mAccountAdapter.notifyDataSetChanged();
     }
 
     private class AccountHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
@@ -119,8 +128,7 @@ public class AccountListFragment extends Fragment {
 
         @Override
         public void onClick(View view) {
-            Intent intent = new Intent(getActivity(), CardListActivity.class);
-            intent.putExtra("accountID", mAccount.getAccountID());
+            Intent intent = CardListActivity.newIntent(getActivity(), mAccount);
 
             startActivity(intent);
         }

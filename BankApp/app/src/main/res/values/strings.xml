@@ -1,7 +1,17 @@
 <resources>
-    <string name="app_name">辣鸡银行</string>
-    <string name="hello_blank_fragment">Hello blank fragment</string>
-    <string name="hint_input_account_name">请输入账户名</string>
-    <string name="fix_input_account_name">创建账户</string>
-    <string name="fix_create_new_account">新建账户</string><string name="account_create">新建账户</string><string name="account_list">账户列表</string><string name="fix_input_card_number">卡号</string><string name="hint_input_card_number">请输入卡号</string><string name="fix_create_new_card">创建卡片</string><string name="card_list">卡片列表</string><string name="card_create">创建卡片</string><string name="fix_create">新建</string>
+  <string name="app_name">辣鸡银行</string>
+  <string name="please_input_account_name">请输入账户名</string>
+  <string name="input_account_name">创建账户</string>
+  <string name="create_new_account">新建账户</string>
+  <string name="account_list">账户列表</string>
+  <string name="card_number">卡号</string>
+  <string name="card_balance">余额</string>
+  <string name="please_input_card_number">请输入卡号</string>
+  <string name="create_new_card">创建卡片</string>
+  <string name="card_list">卡片列表</string>
+  <string name="create">新建</string>
+  <string name="debit_card">借记卡</string>
+  <string name="credit_card">信用卡</string>
+  <string name="platinum_card">白金卡</string>
+  <string name="please_choose_card_type">请选择卡的类型</string><string name="please_input_card_balance">请输入卡的余额</string><string name="deposit">存款</string><string name="withdraw">取款</string><string name="purchase">付款</string><string name="choose_function">选择操作</string><string name="function">操作</string><string name="please_input_amount">请输入数量</string><string name="please_input_terms">请输入期数</string>
 </resources>

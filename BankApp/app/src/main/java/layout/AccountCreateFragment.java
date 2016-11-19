@@ -35,20 +35,19 @@ public class AccountCreateFragment extends DialogFragment {
     @NonNull
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
-        final Account account = (Account) getArguments().getSerializable(ARG_CREATE_ACCOUNT);
+        mAccount = (Account) getArguments().getSerializable(ARG_CREATE_ACCOUNT);
 
-        View view = LayoutInflater.from(getActivity()).inflate(R.layout.fragment_create_account, null);
+        View view = LayoutInflater.from(getActivity()).inflate(R.layout.dialog_fragment_create_account, null);
 
         mAccountNameInput = (EditText) view.findViewById(R.id.input_account_name);
 
         return new AlertDialog.Builder(getActivity())
-                .setView(view)
-                .setTitle(R.string.fix_create)
+                .setView(view).setTitle(R.string.create)
                 .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        account.setAccountName(mAccountNameInput.getText().toString()); //设置新建的账户的名字
-                        sendResult(Activity.RESULT_OK, account); //传回结果
+                        mAccount.setAccountName(mAccountNameInput.getText().toString()); //设置新建的账户的名字
+                        sendResult(Activity.RESULT_OK, mAccount); //传回结果
                     }
                 })
                 .create();

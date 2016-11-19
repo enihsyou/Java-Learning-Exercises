@@ -1,30 +1,41 @@
 package com.enihsyou.shane.bankapp.Card;
 
+import android.annotation.TargetApi;
+import android.os.Build;
 import com.enihsyou.shane.bankapp.BuildConfig;
 
+import java.io.Serializable;
+import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 import java.text.NumberFormat;
-import java.util.ArrayList;
-import java.util.UUID;
 
 /**
  * 所有卡片的基类
  */
-public abstract class BaseCard {
-    BigDecimal fee; //手续费，小数
-    BigDecimal quota; //限额，透支额度
-    String cardName; //卡片名称
+public class BaseCard implements Serializable {
+    BigDecimal fee = BigDecimal.ZERO; //手续费，小数
+    BigDecimal quota = BigDecimal.ZERO; //限额，透支额度
+    String cardName = "陷阱卡"; //卡片名称
 
-    private UUID accountID; //隶属于哪个账户
-    private long cardNumber; //TODO: 包装成类
-    private BigDecimal balance; //余额
-    private BigDecimal remain; //剩余可透支
-    private ArrayList<CardLog> logArrayList; //操作历史记录
+    // private UUID accountID; //隶属于哪个账户
+    private long cardNumber = 0; //TODO: 包装成类
+    private BigDecimal balance = BigDecimal.ZERO; //余额
+    private BigDecimal remain = BigDecimal.ZERO; //剩余可透支
+
+    // private ArrayList<CardLog> logArrayList; //操作历史记录
 
     private static NumberFormat currencyFormatter = NumberFormat.getCurrencyInstance(); // TODO: 16/11/18 018 添加地区 币种
 
+
+    @TargetApi(Build.VERSION_CODES.KITKAT)
+    public void loadProperty(Class<? extends BaseCard> cardClass, BaseCard card, BigDecimal amount) {
+        try {
+            cardClass.getMethod("setProperty", BaseCard.class, BigDecimal.class).invoke(card, card, amount);
+        } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException ignore) {}
+    }
+
     /*存钱*/
-    BigDecimal deposit(BigDecimal amount) {
+    public BigDecimal deposit(BigDecimal amount) {
         if (BuildConfig.DEBUG && amount.compareTo(BigDecimal.ZERO) <= 0) throw new IllegalArgumentException();
         BigDecimal moneySubRemain = amount.subtract(quota.subtract(remain)); //存入减去还款剩下的:多余量=存进来—(额度—剩余额度)
         if (moneySubRemain.compareTo(BigDecimal.ZERO) >= 0) { //还款过多
@@ -33,12 +44,12 @@ public abstract class BaseCard {
         } else {
             remain = quota.add(moneySubRemain); //加一个负数
         }
-        logArrayList.add(new CardLog.DepositLog(amount));
+        // logArrayList.add(new CardLog.DepositLog(amount));
         return amount;
     }
 
     /*取钱*/
-    BigDecimal withdraw(BigDecimal amount) {
+    public BigDecimal withdraw(BigDecimal amount) {
         BigDecimal thisFee = amount.multiply(fee); //本次操作需要的手续费
         amount = amount.add(thisFee);
         BigDecimal newMoney = balance.subtract(amount); //尝试直接取钱:newMoney=余额—取钱量
@@ -51,7 +62,7 @@ public abstract class BaseCard {
         } else {
             return BigDecimal.ZERO;
         }
-        logArrayList.add(new CardLog.WithdrawLog(amount, thisFee));
+        // logArrayList.add(new CardLog.WithdrawLog(amount, thisFee));
         return amount;
     }
 
@@ -63,7 +74,7 @@ public abstract class BaseCard {
      *
      * @return BigDecimal 返回成功操作的钱数，不为0即成功
      */
-    BigDecimal withdraw(BigDecimal amount, int times) {
+    public BigDecimal withdraw(BigDecimal amount, int times) {
         BigDecimal withdrawTimes = new BigDecimal(times); //包装一下做除法
         BigDecimal total = amount.divide(withdrawTimes, BigDecimal.ROUND_HALF_UP);
         BigDecimal thisFee = total.multiply(fee); //本次操作需要的手续费
@@ -78,7 +89,7 @@ public abstract class BaseCard {
         } else {
             return BigDecimal.ZERO;
         }
-        logArrayList.add(new CardLog.PurchaseLog(amount, thisFee, times));
+        // logArrayList.add(new CardLog.PurchaseLog(amount, thisFee, times));
         return total;
     }
 
@@ -122,10 +133,15 @@ public abstract class BaseCard {
         return remain;
     }
 
-    /*获取操作记录*/
-    public ArrayList<CardLog> getLogArrayList() {
-        return logArrayList;
+    /*设置剩余额度*/
+    public void setRemain(BigDecimal remain) {
+        this.remain = remain;
     }
+
+    /*获取操作记录*/
+    // public ArrayList<CardLog> getLogArrayList() {
+    //     return logArrayList;
+    // }
 
     /*格式化货币数字*/
     public static String format(BigDecimal number) {

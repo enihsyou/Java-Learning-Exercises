@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+  xmlns:tools="http://schemas.android.com/tools"
+  android:orientation="vertical"
+  android:layout_width="match_parent"
+  android:layout_height="match_parent">
+<LinearLayout
+  android:orientation="horizontal"
+  android:layout_width="match_parent"
+  android:layout_height="wrap_content"
+  android:layout_marginStart="16dp"
+  android:layout_marginEnd="16dp">
+  <TextView
+    android:text="@string/card_number"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content" />
+  <EditText
+    android:id="@+id/input_card_number"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:hint="@string/please_input_card_number"
+    android:inputType="number"
+    android:layout_marginStart="4dp"
+    android:layout_marginEnd="4dp"
+    android:maxLines="1" />
+</LinearLayout>
+<LinearLayout
+  android:orientation="horizontal"
+  android:layout_width="match_parent"
+  android:layout_height="wrap_content"
+  android:layout_marginStart="16dp"
+  android:layout_marginEnd="16dp">
+  <TextView
+    android:text="@string/card_balance"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content" />
+  <EditText
+    android:id="@+id/input_card_balance"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:hint="@string/please_input_card_balance"
+    android:layout_marginStart="4dp"
+    android:layout_marginEnd="4dp"
+    android:maxLines="1"
+    android:inputType="number|numberDecimal" />
+</LinearLayout>
+  <TextView
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="8dp"
+    android:layout_marginStart="16dp"
+    android:layout_marginEnd="16dp"
+    android:text="@string/please_choose_card_type" />
+  <RadioGroup
+    android:id="@+id/radio_card_type_group"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="8dp"
+    android:layout_marginStart="16dp"
+    android:layout_marginEnd="16dp"
+    android:checkedButton="@+id/radio_DebitCard">
+    <RadioButton
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:id="@+id/radio_DebitCard"
+      android:text="@string/debit_card" />
+    <RadioButton
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:id="@+id/radio_CreditCard"
+      android:layout_weight="1"
+      android:text="@string/credit_card" />
+    <RadioButton
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:id="@+id/radio_PlatinumCard"
+      android:layout_weight="1"
+      android:text="@string/platinum_card" />
+</RadioGroup>
+</LinearLayout>

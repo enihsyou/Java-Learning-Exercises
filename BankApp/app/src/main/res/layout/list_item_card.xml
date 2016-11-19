@@ -28,7 +28,8 @@
             tools:text="剩余额度"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/list_item_card_remain" />
+          android:id="@+id/list_item_card_remain"
+          android:textAlignment="textEnd" />
     </LinearLayout>
     <LinearLayout
         android:orientation="vertical"
