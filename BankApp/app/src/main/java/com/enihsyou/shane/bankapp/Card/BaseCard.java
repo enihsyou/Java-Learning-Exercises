@@ -2,12 +2,14 @@ package com.enihsyou.shane.bankapp.Card;
 
 import android.annotation.TargetApi;
 import android.os.Build;
+import com.enihsyou.shane.bankapp.Account.Account;
 import com.enihsyou.shane.bankapp.BuildConfig;
 
 import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 import java.text.NumberFormat;
+import java.util.UUID;
 
 /**
  * 所有卡片的基类
@@ -18,6 +20,8 @@ public class BaseCard implements Serializable {
     String cardName = "陷阱卡"; //卡片名称
 
     // private UUID accountID; //隶属于哪个账户
+    private UUID mID;
+    private Account account = new Account();
     private long cardNumber = 0; //TODO: 包装成类
     private BigDecimal balance = BigDecimal.ZERO; //余额
     private BigDecimal remain = BigDecimal.ZERO; //剩余可透支
@@ -26,6 +30,9 @@ public class BaseCard implements Serializable {
 
     private static NumberFormat currencyFormatter = NumberFormat.getCurrencyInstance(); // TODO: 16/11/18 018 添加地区 币种
 
+    public BaseCard() {
+        mID = UUID.randomUUID();
+    }
 
     @TargetApi(Build.VERSION_CODES.KITKAT)
     public void loadProperty(Class<? extends BaseCard> cardClass, BaseCard card, BigDecimal amount) {
@@ -60,7 +67,7 @@ public class BaseCard implements Serializable {
             remain = remain.subtract(amount.subtract(balance));
             balance = BigDecimal.ZERO;
         } else {
-            return BigDecimal.ZERO;
+            return BigDecimal.ONE.negate(); //—1代表失败
         }
         // logArrayList.add(new CardLog.WithdrawLog(amount, thisFee));
         return amount;
@@ -72,7 +79,7 @@ public class BaseCard implements Serializable {
      * @param amount 付款金额
      * @param times  分期次数，times>1
      *
-     * @return BigDecimal 返回成功操作的钱数，不为0即成功
+     * @return BigDecimal 返回成功操作的钱数，不为-1即成功
      */
     public BigDecimal withdraw(BigDecimal amount, int times) {
         BigDecimal withdrawTimes = new BigDecimal(times); //包装一下做除法
@@ -84,10 +91,10 @@ public class BaseCard implements Serializable {
         if (newMoney.compareTo(BigDecimal.ZERO) >= 0) { //余额足够
             balance = newMoney;
         } else if (newMoney.add(remain).compareTo(BigDecimal.ZERO) >= 0) { //加上透支 足够
-            remain = remain.subtract(amount.subtract(balance));
+            remain = remain.subtract(total.subtract(balance));
             balance = BigDecimal.ZERO;
         } else {
-            return BigDecimal.ZERO;
+            return BigDecimal.ONE.negate();
         }
         // logArrayList.add(new CardLog.PurchaseLog(amount, thisFee, times));
         return total;
@@ -146,6 +153,18 @@ public class BaseCard implements Serializable {
     /*格式化货币数字*/
     public static String format(BigDecimal number) {
         return currencyFormatter.format(number);
+    }
+
+    public void setAccountName(String name) {
+        account.setAccountName(name);
+    }
+
+    public String getAccountName() {
+        return account.getAccountName();
+    }
+
+    public UUID getID() {
+        return mID;
     }
 }
 

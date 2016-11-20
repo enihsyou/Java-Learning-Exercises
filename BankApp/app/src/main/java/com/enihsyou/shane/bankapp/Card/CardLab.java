@@ -1,28 +1,34 @@
 package com.enihsyou.shane.bankapp.Card;
 
-import com.enihsyou.shane.bankapp.Account.Account;
+import android.content.Context;
 
 import java.util.ArrayList;
+import java.util.UUID;
 
 public class CardLab {
-    private Account mAccount;
+    private static CardLab sCardLab; //作为单例
+    private ArrayList<BaseCard> mCards;
 
-    public CardLab(Account account) {
-        mAccount = account;
+    private CardLab(Context context) {
+        mCards = new ArrayList<>();
+        for (int i = 0; i < 2; i++) {
+            mCards.add(new BaseCard());
+        }
+    }
+
+    public static CardLab get(Context context) {
+        if (sCardLab == null) sCardLab = new CardLab(context);
+        return sCardLab;
     }
 
     public ArrayList<BaseCard> getCards() {
-        return mAccount.getAccountCards();
+        return mCards;
     }
 
-    public BaseCard getCard(long cardNumber) {
-        for (BaseCard card : mAccount.getAccountCards()) {
-            if (card.getCardNumber() == cardNumber) return card;
+    public BaseCard getCard(UUID uuid) {
+        for (BaseCard card : mCards) {
+            if (card.getID().equals(uuid)) return card;
         }
         return null;
-    }
-
-    public void addCard(BaseCard card) {
-        mAccount.getAccountCards().add(card);
     }
 }

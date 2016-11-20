@@ -8,29 +8,41 @@
       android:label="@string/app_name"
       android:supportsRtl="true"
       android:theme="@style/AppTheme">
-        <!--账户部分-->
       <activity
-        android:name="layout.AccountListActivity"
-        android:label="@string/account_list">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
-        <activity
-          android:name="layout.AccountCreateActivity"
-          android:label="@string/create_new_account">
-        </activity>
+        android:name="layout.MainActivity"
+        android:label="@string/app_name">
+        <intent-filter>
+          <action android:name="android.intent.action.MAIN" />
+          <category android:name="android.intent.category.LAUNCHER" />
+        </intent-filter>
+      </activity>
+      <activity
+        android:name="layout.DetailActivity"
+        android:label="@string/function">
+      </activity>
+      <!--账户部分-->
+      <!--<activity-->
+      <!--android:name="layout.AccountListActivity"-->
+      <!--android:label="@string/account_list">-->
+      <!--<intent-filter>-->
+      <!--<action android:name="android.intent.action.MAIN" />-->
+      <!--<category android:name="android.intent.category.LAUNCHER" />-->
+      <!--</intent-filter>-->
+      <!--</activity>-->
+      <!--<activity-->
+      <!--android:name="layout.AccountCreateActivity"-->
+      <!--android:label="@string/create_new_account">-->
+      <!--</activity>-->
 
-      <!--卡片部分-->
-      <activity
-        android:label="@string/card_list"
-        android:name="layout.CardListActivity">
-        </activity>
-        <activity
-          android:name="layout.CardCreateActivity"
-          android:label="@string/create_new_card">
-        </activity>
-<activity android:name="layout.DetailActivity" />
+      <!--&lt;!&ndash;卡片部分&ndash;&gt;-->
+      <!--<activity-->
+      <!--android:label="@string/card_list"-->
+      <!--android:name="layout.CardListActivity">-->
+      <!--</activity>-->
+      <!--<activity-->
+      <!--android:name="layout.CardCreateActivity"-->
+      <!--android:label="@string/create_new_card">-->
+      <!--</activity>-->
+      <!--<activity android:name="layout.DetailActivity" />-->
       </application>
 </manifest>
