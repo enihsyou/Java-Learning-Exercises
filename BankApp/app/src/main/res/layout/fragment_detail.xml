@@ -16,12 +16,15 @@
         android:text="@string/card_balance"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:textSize="24sp"
         android:id="@+id/balance_view"
         android:textAlignment="center" />
       <TextView
         android:text="@string/card_remain"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:textSize="24sp"
+
         android:id="@+id/remain_view"
         android:textAlignment="center" />
     </LinearLayout>
