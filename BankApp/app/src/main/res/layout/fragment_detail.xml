@@ -16,19 +16,25 @@
         android:text="@string/card_balance"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textSize="24sp"
+        android:textSize="36sp"
+        android:layout_marginBottom="4dp"
         android:id="@+id/balance_view"
         android:textAlignment="center" />
       <TextView
         android:text="@string/card_remain"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textSize="24sp"
-
+        android:textSize="36sp"
+        android:layout_marginTop="4dp"
         android:id="@+id/remain_view"
         android:textAlignment="center" />
     </LinearLayout>
   </LinearLayout>
+  <LinearLayout
+    android:orientation="vertical"
+    android:layout_margin="16dp"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
   <Button
     android:id="@+id/button_deposit"
     android:text="@string/deposit"
@@ -44,4 +50,5 @@
     android:text="@string/purchase"
     android:layout_width="match_parent"
     android:layout_height="wrap_content" />
+  </LinearLayout>
 </LinearLayout>

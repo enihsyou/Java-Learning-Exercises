@@ -42,8 +42,7 @@ public class DetailFragment extends Fragment {
 
     @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable final ViewGroup container, @Nullable Bundle
-            savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, @Nullable final ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_detail, container, false);
 
         mBalanceView = (TextView) view.findViewById(R.id.balance_view);
@@ -57,70 +56,80 @@ public class DetailFragment extends Fragment {
         mDepositButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(final View view) {
-                final View view1 = LayoutInflater.from(getActivity()).inflate(R.layout.dialog_fragment_deposit,
-                        container,
-                        false);
-                setTargetFragment(DetailFragment.this, DEPOSIT);
-                new AlertDialog.Builder(getActivity()).setView(view1).setTitle(R.string.deposit).setPositiveButton(
-                        android.R.string.ok,
+                final View view1 = LayoutInflater
+                        .from(getActivity())
+                        .inflate(R.layout.dialog_fragment_deposit, container, false);
+                final EditText editText = (EditText) view1.findViewById(R.id.input_deposit_amount);
+                // editText.setText("0");
 
-                        new DialogInterface.OnClickListener() {
+                setTargetFragment(DetailFragment.this, DEPOSIT);
+                new AlertDialog.Builder(getActivity())
+                        .setView(view1)
+                        .setTitle(R.string.deposit)
+                        .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i) {
-                                String input = ((EditText) view1.findViewById(R.id.input_deposit_amount))
-                                        .getText()
-                                        .toString();
+                                String input = editText.getText().toString();
+                                input = input.equals("") ? "0" : input;
                                 sendCard(Activity.RESULT_OK, input);
                             }
-                        }).create().show();
-
+                        })
+                        .create()
+                        .show();
             }
         });
         mWithdrawButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(final View view) {
-                final View view1 = LayoutInflater.from(getActivity()).inflate(R.layout.dialog_fragment_withdraw,
-                        container,
-                        false);
+                final View view1 = LayoutInflater
+                        .from(getActivity())
+                        .inflate(R.layout.dialog_fragment_withdraw, container, false);
+                final EditText editText = (EditText) view1.findViewById(R.id.input_withdraw_amount);
+                // editText.setText("0");
+
                 setTargetFragment(DetailFragment.this, WITHDRAW);
-
-                new AlertDialog.Builder(getActivity()).setView(view1).setTitle(R.string.withdraw).setPositiveButton(
-                        android.R.string.ok,
-
-                        new DialogInterface.OnClickListener() {
+                new AlertDialog.Builder(getActivity())
+                        .setView(view1)
+                        .setTitle(R.string.withdraw)
+                        .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i) {
-                                String input = ((EditText) view1.findViewById(R.id.input_withdraw_amount))
-                                        .getText()
-                                        .toString();
+                                String input = editText.getText().toString();
+                                input = input.equals("") ? "0" : input;
                                 sendCard(Activity.RESULT_OK, input);
                             }
-                        }).create().show();
+                        })
+                        .create()
+                        .show();
             }
         });
         mPurchaseButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(final View view) {
-                final View view1 = LayoutInflater.from(getActivity()).inflate(R.layout.dialog_fragment_purchase,
-                        container,
-                        false);
+                final View view1 = LayoutInflater
+                        .from(getActivity())
+                        .inflate(R.layout.dialog_fragment_purchase, container, false);
+                final EditText editText1 = (EditText) view1.findViewById(R.id.input_purchase_amount);
+                final EditText editText2 = (EditText) view1.findViewById(R.id.input_purchase_terms);
+                // editText1.setText("0");
+                editText2.setText("1");
+                if (BigDecimal.ZERO.equals(mCard.getQuota())) editText2.setVisibility(View.INVISIBLE);
+
                 setTargetFragment(DetailFragment.this, PURCHASE);
-
-                new AlertDialog.Builder(getActivity()).setView(view1).setTitle(R.string.purchase).setPositiveButton(
-                        android.R.string.ok,
-
-                        new DialogInterface.OnClickListener() {
+                new AlertDialog.Builder(getActivity())
+                        .setView(view1)
+                        .setTitle(R.string.purchase)
+                        .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i) {
-                                String input1 = ((EditText) view1.findViewById(R.id.input_purchase_amount))
-                                        .getText()
-                                        .toString();
-                                String input2 = ((EditText) view1.findViewById(R.id.input_purchase_terms))
-                                        .getText()
-                                        .toString();
+                                String input1 = editText1.getText().toString();
+                                input1 = input1.equals("") ? "0" : input1;
+                                String input2 = editText2.getText().toString();
                                 sendCard(Activity.RESULT_OK, input1, input2);
                             }
-                        }).create().show();
+                        })
+                        .create()
+                        .show();
             }
         });
 
@@ -137,35 +146,29 @@ public class DetailFragment extends Fragment {
         switch (requestCode) {
             case DEPOSIT:
                 amount = new BigDecimal((String) data.getSerializableExtra("amount"));
-                if (BigDecimal.ZERO.equals(mCard.deposit(amount))) Toast.makeText(getActivity(),
-                        "存0？？？",
-                        Toast.LENGTH_SHORT).show();
+                if (BigDecimal.ZERO.equals(mCard.deposit(amount)))
+                    Toast.makeText(getActivity(), "什么也没发生", Toast.LENGTH_SHORT).show();
                 break;
             case WITHDRAW:
                 amount = new BigDecimal((String) data.getSerializableExtra("amount"));
-                if (BigDecimal.ZERO.compareTo(mCard.withdraw(amount)) > 0) Toast.makeText(getActivity(),
-                        "没钱了",
-                        Toast.LENGTH_SHORT).show();
+                if (BigDecimal.ZERO.compareTo(mCard.withdraw(amount)) > 0)
+                    Toast.makeText(getActivity(), "没钱了", Toast.LENGTH_SHORT).show();
                 break;
             case PURCHASE:
                 amount = new BigDecimal((String) data.getSerializableExtra("amount"));
                 terms = Integer.parseInt((String) data.getSerializableExtra("terms"));
-                if (BigDecimal.ZERO.compareTo(mCard.withdraw(amount, terms)) > 0) Toast.makeText(getActivity(),
-                        "没钱了",
-                        Toast.LENGTH_SHORT).show();
+                if (BigDecimal.ZERO.compareTo(mCard.withdraw(amount, terms)) > 0)
+                    Toast.makeText(getActivity(), "钱不够了", Toast.LENGTH_SHORT).show();
                 break;
         }
         updateUI();
     }
 
     private void updateUI() {
-        mBalanceView.setText(getResources().getString(
-                R.string.card_balance_string,
-                BaseCard.format(mCard.getBalance())));
+        mBalanceView.setText(getResources().getString(R.string.card_balance_string, BaseCard.format(mCard.getBalance())));
         if (BigDecimal.ZERO.equals(mCard.getQuota())) mRemainView.setText("");
-        else mRemainView.setText(getResources().getString(
-                R.string.card_remain_string,
-                BaseCard.format(mCard.getRemain())));
+        else
+            mRemainView.setText(getResources().getString(R.string.card_remain_string, BaseCard.format(mCard.getRemain())));
     }
 
     private void sendCard(int resultCode, String amount) {

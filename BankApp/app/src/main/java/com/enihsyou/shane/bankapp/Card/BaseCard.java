@@ -43,7 +43,7 @@ public class BaseCard implements Serializable {
 
     /*存钱*/
     public BigDecimal deposit(BigDecimal amount) {
-        if (BuildConfig.DEBUG && amount.compareTo(BigDecimal.ZERO) <= 0) throw new IllegalArgumentException();
+        if (BuildConfig.DEBUG && amount.compareTo(BigDecimal.ZERO) < 0) throw new IllegalArgumentException();
         BigDecimal moneySubRemain = amount.subtract(quota.subtract(remain)); //存入减去还款剩下的:多余量=存进来—(额度—剩余额度)
         if (moneySubRemain.compareTo(BigDecimal.ZERO) >= 0) { //还款过多
             balance = balance.add(moneySubRemain);

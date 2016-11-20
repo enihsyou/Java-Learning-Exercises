@@ -66,7 +66,6 @@ public class MainDialog extends DialogFragment {
                                 .makeText(getActivity(), "输入余额为空", Toast.LENGTH_SHORT)
                                 .show();
                         else {
-
                             BigDecimal amount = new BigDecimal(cardBalance);
                             switch (mCardTypeRadio.getCheckedRadioButtonId()) {
                                 case R.id.radio_DebitCard:
