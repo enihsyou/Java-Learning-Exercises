@@ -9,6 +9,7 @@ import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 import java.text.NumberFormat;
+import java.util.Random;
 import java.util.UUID;
 
 /**
@@ -21,8 +22,8 @@ public class BaseCard implements Serializable {
 
     // private UUID accountID; //隶属于哪个账户
     private UUID mID;
-    private Account account = new Account();
-    private long cardNumber = 0; //TODO: 包装成类
+    private Account account;
+    private long cardNumber; //TODO: 包装成类
     private BigDecimal balance = BigDecimal.ZERO; //余额
     private BigDecimal remain = BigDecimal.ZERO; //剩余可透支
 
@@ -32,6 +33,8 @@ public class BaseCard implements Serializable {
 
     public BaseCard() {
         mID = UUID.randomUUID();
+        account = new Account();
+        cardNumber = Math.abs(new Random().nextLong()); //随机生成一个
     }
 
     @TargetApi(Build.VERSION_CODES.KITKAT)

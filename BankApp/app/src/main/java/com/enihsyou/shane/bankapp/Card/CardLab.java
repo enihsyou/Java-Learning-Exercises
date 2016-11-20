@@ -11,7 +11,7 @@ public class CardLab {
 
     private CardLab(Context context) {
         mCards = new ArrayList<>();
-        for (int i = 0; i < 2; i++) {
+        for (int i = 0; i < 1; i++) {
             mCards.add(new BaseCard());
         }
     }

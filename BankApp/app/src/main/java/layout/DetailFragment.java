@@ -51,6 +51,8 @@ public class DetailFragment extends Fragment {
         mWithdrawButton = (Button) view.findViewById(R.id.button_withdraw);
         mPurchaseButton = (Button) view.findViewById(R.id.button_purchase);
 
+        if (BigDecimal.ZERO.equals(mCard.getQuota())) mRemainView.setVisibility(View.GONE); //如果是借记卡 删除剩余额度显示
+
         updateUI();
 
         mDepositButton.setOnClickListener(new View.OnClickListener() {
@@ -60,7 +62,6 @@ public class DetailFragment extends Fragment {
                         .from(getActivity())
                         .inflate(R.layout.dialog_fragment_deposit, container, false);
                 final EditText editText = (EditText) view1.findViewById(R.id.input_deposit_amount);
-                // editText.setText("0");
 
                 setTargetFragment(DetailFragment.this, DEPOSIT);
                 new AlertDialog.Builder(getActivity())
@@ -70,7 +71,7 @@ public class DetailFragment extends Fragment {
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i) {
                                 String input = editText.getText().toString();
-                                input = input.equals("") ? "0" : input;
+                                input = input.equals("") ? "0" : input; //防止输入空值
                                 sendCard(Activity.RESULT_OK, input);
                             }
                         })
@@ -85,7 +86,6 @@ public class DetailFragment extends Fragment {
                         .from(getActivity())
                         .inflate(R.layout.dialog_fragment_withdraw, container, false);
                 final EditText editText = (EditText) view1.findViewById(R.id.input_withdraw_amount);
-                // editText.setText("0");
 
                 setTargetFragment(DetailFragment.this, WITHDRAW);
                 new AlertDialog.Builder(getActivity())
@@ -95,7 +95,7 @@ public class DetailFragment extends Fragment {
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i) {
                                 String input = editText.getText().toString();
-                                input = input.equals("") ? "0" : input;
+                                input = input.equals("") ? "0" : input;//防止输入空值
                                 sendCard(Activity.RESULT_OK, input);
                             }
                         })
@@ -111,9 +111,7 @@ public class DetailFragment extends Fragment {
                         .inflate(R.layout.dialog_fragment_purchase, container, false);
                 final EditText editText1 = (EditText) view1.findViewById(R.id.input_purchase_amount);
                 final EditText editText2 = (EditText) view1.findViewById(R.id.input_purchase_terms);
-                // editText1.setText("0");
-                editText2.setText("1");
-                if (BigDecimal.ZERO.equals(mCard.getQuota())) editText2.setVisibility(View.INVISIBLE);
+                if (BigDecimal.ZERO.equals(mCard.getQuota())) editText2.setVisibility(View.GONE);
 
                 setTargetFragment(DetailFragment.this, PURCHASE);
                 new AlertDialog.Builder(getActivity())
@@ -123,8 +121,9 @@ public class DetailFragment extends Fragment {
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i) {
                                 String input1 = editText1.getText().toString();
-                                input1 = input1.equals("") ? "0" : input1;
+                                input1 = input1.equals("") ? "0" : input1;//防止输入空值
                                 String input2 = editText2.getText().toString();
+                                input2 = input2.equals("") || input2.equals("0") ? "1" : input2;//防止输入无效值
                                 sendCard(Activity.RESULT_OK, input1, input2);
                             }
                         })
@@ -138,8 +137,6 @@ public class DetailFragment extends Fragment {
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        // Log.e("1", mCard.getBalance().toString());
-
         if (resultCode != Activity.RESULT_OK) return;
         BigDecimal amount;
         int terms;
