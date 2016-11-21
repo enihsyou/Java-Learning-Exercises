@@ -39,7 +39,6 @@ public class DetailFragment extends Fragment {
         mCard = CardLab.get(getActivity()).getCard((UUID) getArguments().getSerializable(ARG_CARD));
     }
 
-
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable final ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -114,6 +113,7 @@ public class DetailFragment extends Fragment {
                 if (BigDecimal.ZERO.equals(mCard.getQuota())) editText2.setVisibility(View.GONE);
 
                 setTargetFragment(DetailFragment.this, PURCHASE);
+
                 new AlertDialog.Builder(getActivity())
                         .setView(view1)
                         .setTitle(R.string.purchase)

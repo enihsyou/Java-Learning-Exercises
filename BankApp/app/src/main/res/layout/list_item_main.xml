@@ -24,12 +24,15 @@
       android:layout_height="wrap_content"
       android:textAlignment="viewEnd"
       android:layout_gravity="end"
+      android:maxLines="1"
+      android:maxLength="20"
       tools:text="账户余额" />
     <TextView
       tools:text="剩余额度"
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
       android:id="@+id/list_item_card_remain"
+      android:maxLines="1"
       android:textAlignment="textEnd"
       android:layout_gravity="end" />
   </LinearLayout>
@@ -57,6 +60,8 @@
       android:layout_marginLeft="4sp"
       android:layout_marginStart="4sp"
       tools:text="卡号"
+      android:maxLines="1"
+      android:maxLength="20"
       android:layout_width="wrap_content"
       android:layout_height="wrap_content" />
     </LinearLayout>
