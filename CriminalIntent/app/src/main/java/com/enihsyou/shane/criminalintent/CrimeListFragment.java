@@ -10,7 +10,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import java.util.List;
 
@@ -20,8 +19,7 @@ public class CrimeListFragment extends Fragment {
 
     @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle
-            savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_crime_list, container, false);
         mCrimeRecyclerView = (RecyclerView) view.findViewById(R.id.crime_recycler_view);
         mCrimeRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
@@ -33,12 +31,19 @@ public class CrimeListFragment extends Fragment {
         CrimeLab crimeLab = CrimeLab.get(getActivity());
         List<Crime> crimes = crimeLab.getCrimes();
 
-        mCrimeAdapter = new CrimeAdapter(crimes);
-        mCrimeRecyclerView.setAdapter(mCrimeAdapter);
+        if (mCrimeAdapter == null) {
+            mCrimeAdapter = new CrimeAdapter(crimes);
+            mCrimeRecyclerView.setAdapter(mCrimeAdapter);
+        } else mCrimeAdapter.notifyDataSetChanged();
     }
 
-    private class CrimeHolder extends RecyclerView.ViewHolder
-            implements View.OnClickListener {
+    @Override
+    public void onResume() {
+        super.onResume();
+        updateUI();
+    }
+
+    private class CrimeHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         private Crime mCrime;
         private TextView mTitleTextView;
         private TextView mDateTextView;
@@ -62,9 +67,7 @@ public class CrimeListFragment extends Fragment {
 
         @Override
         public void onClick(View v) {
-            Toast.makeText(getActivity(),
-                    mCrime.getTitle() + " clicked!", Toast.LENGTH_SHORT)
-                    .show();
+            startActivity(CrimeActivity.newIntent(getActivity(), mCrime.getID()));
         }
     }
 
