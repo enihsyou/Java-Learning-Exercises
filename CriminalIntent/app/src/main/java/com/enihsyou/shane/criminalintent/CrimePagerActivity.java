@@ -5,15 +5,15 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.support.v7.app.AppCompatActivity;
 
 import java.util.List;
 import java.util.UUID;
 
-public class CrimePagerActivity extends FragmentActivity {
+public class CrimePagerActivity extends AppCompatActivity {
     public static final String EXTRA_CRIME_ID = "com.enihsyou.shane.criminalintent.crime_id";
     private ViewPager mViewPager;
     private List<Crime> mCrime;
@@ -48,5 +48,11 @@ public class CrimePagerActivity extends FragmentActivity {
         });
 
         UUID crimeID = ((UUID) getIntent().getSerializableExtra(EXTRA_CRIME_ID));
+        for (int i = 0; i < mCrime.size(); i++) {
+            if (mCrime.get(i).getID().equals(crimeID)) {
+                mViewPager.setCurrentItem(i);
+                break;
+            }
+        }
     }
 }
