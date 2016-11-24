@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.UUID;
 
 public class CrimePagerActivity extends AppCompatActivity {
-    public static final String EXTRA_CRIME_ID = "com.enihsyou.shane.criminalintent.crime_id";
+    private static final String EXTRA_CRIME_ID = "com.enihsyou.shane.criminalintent.crime_id";
     private ViewPager mViewPager;
     private List<Crime> mCrime;
 
@@ -22,6 +22,11 @@ public class CrimePagerActivity extends AppCompatActivity {
         Intent intent = new Intent(packageContext, CrimePagerActivity.class);
         intent.putExtra(EXTRA_CRIME_ID, crimeID);
         return intent;
+    }
+
+    @Override
+    public Intent getParentActivityIntent() {
+        return getIntent();
     }
 
     @Override
