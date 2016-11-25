@@ -38,7 +38,10 @@ public class CrimeListFragment extends Fragment {
         if (mCrimeAdapter == null) {
             mCrimeAdapter = new CrimeAdapter(crimes);
             mCrimeRecyclerView.setAdapter(mCrimeAdapter);
-        } else mCrimeAdapter.notifyDataSetChanged();
+        } else {
+            mCrimeAdapter.setCrimes(crimes);
+            mCrimeAdapter.notifyDataSetChanged();
+        }
 
         updateSubtitle();
     }
@@ -130,9 +133,11 @@ public class CrimeListFragment extends Fragment {
         public void onClick(View v) {
             startActivity(CrimePagerActivity.newIntent(getActivity(), mCrime.getID()));
         }
+
     }
 
     private class CrimeAdapter extends RecyclerView.Adapter<CrimeHolder> {
+
         private List<Crime> mCrimes;
 
         public CrimeAdapter(List<Crime> crimes) {
@@ -155,6 +160,10 @@ public class CrimeListFragment extends Fragment {
         @Override
         public int getItemCount() {
             return mCrimes.size();
+        }
+
+        public void setCrimes(List<Crime> crimes) {
+            mCrimes = crimes;
         }
     }
 
