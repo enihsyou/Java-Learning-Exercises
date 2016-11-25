@@ -15,11 +15,14 @@ public class CrimeBaseHelper extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase sqLiteDatabase) {
-        sqLiteDatabase.execSQL(String.format("CREATE TABLE %s (id INTEGER PRIMARY KEY AUTOINCREMENT,%s ,%s ,%s ,%s)", CrimeTalbe.NAME, CrimeTalbe.Cols.UUID, CrimeTalbe.Cols.TITLE, CrimeTalbe.Cols.DATE, CrimeTalbe.Cols.SOLVED));
+        sqLiteDatabase.execSQL(
+                String.format("CREATE TABLE %s (id INTEGER PRIMARY KEY AUTOINCREMENT,%s ,%s ,%s ,%s, %s)",
+                        CrimeTalbe.NAME, CrimeTalbe.Cols.UUID, CrimeTalbe.Cols.TITLE, CrimeTalbe.Cols.DATE,
+                        CrimeTalbe.Cols.SOLVED, CrimeTalbe.Cols.SUSPECT));
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase sqLiteDatabase, int i, int i1) {
-
+        sqLiteDatabase.execSQL(String.format("DROP TABLE %s", CrimeTalbe.NAME));
     }
 }

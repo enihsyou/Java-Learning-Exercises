@@ -70,6 +70,7 @@ public class CrimeLab {
         values.put(CrimeTalbe.Cols.TITLE, crime.getTitle());
         values.put(CrimeTalbe.Cols.DATE, crime.getDate().getTime());
         values.put(CrimeTalbe.Cols.SOLVED, crime.isSolved());
+        values.put(CrimeTalbe.Cols.SUSPECT, crime.getSuspect());
         return values;
     }
 
