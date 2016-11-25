@@ -18,10 +18,7 @@ import android.text.format.DateFormat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.CheckBox;
-import android.widget.CompoundButton;
-import android.widget.EditText;
+import android.widget.*;
 
 import java.util.Date;
 import java.util.UUID;
@@ -37,6 +34,8 @@ public class CrimeFragment extends Fragment {
     private CheckBox mSolvedCheckBox;
     private Button mReportButton;
     private Button mSuspectButton;
+    private ImageButton mPhotoButton;
+    private ImageView mPhotoView;
 
     public static Fragment newInstance(UUID crimeID) {
         Bundle args = new Bundle();
@@ -147,6 +146,11 @@ public class CrimeFragment extends Fragment {
                 startActivity(intent);
             }
         });
+
+        mPhotoButton = (ImageButton) view.findViewById(R.id.crime_camera);
+
+        mPhotoView = (ImageView) view.findViewById(R.id.crime_photo);
+
         return view;
     }
 
