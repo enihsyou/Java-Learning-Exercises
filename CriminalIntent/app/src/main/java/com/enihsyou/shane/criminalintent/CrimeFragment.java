@@ -2,6 +2,7 @@ package com.enihsyou.shane.criminalintent;
 
 import android.annotation.TargetApi;
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
@@ -35,6 +36,7 @@ public class CrimeFragment extends Fragment {
     private static final int REQUEST_PHOTO = 290;
     private Crime mCrime;
     private File mPhotoFile;
+    private Callbacks mCallbacks;
     /*View widgets*/
     private EditText mTitleField;
     private Button mDateButton;
@@ -43,6 +45,27 @@ public class CrimeFragment extends Fragment {
     private Button mSuspectButton;
     private ImageButton mPhotoButton;
     private ImageView mPhotoView;
+
+    public interface Callbacks {
+        void onCrimeUpdate(Crime crime);
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        mCallbacks = (Callbacks) context;
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        mCallbacks = null;
+    }
+
+    private void updateCrime() {
+        CrimeLab.get(getActivity()).updateCrime(mCrime);
+        mCallbacks.onCrimeUpdate(mCrime);
+    }
 
     public static Fragment newInstance(UUID crimeID) {
         Bundle args = new Bundle();
@@ -107,6 +130,7 @@ public class CrimeFragment extends Fragment {
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 mCrime.setTitle(s.toString());
+                updateCrime();
             }
 
             @Override
@@ -130,7 +154,10 @@ public class CrimeFragment extends Fragment {
         mSolvedCheckBox.setChecked(mCrime.isSolved());
         mSolvedCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {mCrime.setSolved(isChecked);}
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                mCrime.setSolved(isChecked);
+                updateCrime();
+            }
         });
         /*mSuspectButton*/
         if (mCrime.getSuspect() != null) mSuspectButton.setText(mCrime.getSuspect());
@@ -186,6 +213,7 @@ public class CrimeFragment extends Fragment {
                 Date date = (Date) data.getSerializableExtra(DatePickerFragment.EXTRA_DATE);
                 mCrime.setDate(date);
                 updateDate(mCrime.getDate());
+                updateCrime();
                 break;
             case REQUEST_CONTACT:
                 Uri contactUri = data.getData();
@@ -198,11 +226,13 @@ public class CrimeFragment extends Fragment {
                     String suspect = cursor.getString(0);
                     mCrime.setSuspect(suspect);
                     mSuspectButton.setText(suspect);
+                    updateCrime();
                 } finally {
                     cursor.close();
                 }
                 break;
             case REQUEST_PHOTO:
+                updateCrime();
                 updatePhotoView();
         }
     }
