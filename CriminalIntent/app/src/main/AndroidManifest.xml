@@ -23,7 +23,7 @@
         </activity>
       <provider
         android:grantUriPermissions="true"
-        android:authorities="${applicationID}.provider"
+        android:authorities="${applicationId}.provider"
         android:exported="false"
         android:name="android.support.v4.content.FileProvider">
         <meta-data
