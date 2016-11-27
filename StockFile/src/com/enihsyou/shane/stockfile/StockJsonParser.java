@@ -1,3 +1,5 @@
+package com.enihsyou.shane.stockfile;
+
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -28,14 +30,6 @@ public class StockJsonParser {
         return fileList;
     }
 
-    JsonNode getRoot() {
-        return root;
-    }
-
-    private String removePrefix(String raw, String prefix) {
-        return raw.replaceFirst("^" + prefix, "");
-    }
-
     /**
      * API的数据有前缀，比如sh000001，这里手动移除掉。
      *
@@ -46,6 +40,14 @@ public class StockJsonParser {
      */
     private static String removePrefix(String raw, int number) {
         return raw.substring(number, raw.length());
+    }
+
+    JsonNode getRoot() {
+        return root;
+    }
+
+    private String removePrefix(String raw, String prefix) {
+        return raw.replaceFirst("^" + prefix, "");
     }
 }
 

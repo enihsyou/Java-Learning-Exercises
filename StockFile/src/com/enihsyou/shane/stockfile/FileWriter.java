@@ -1,3 +1,5 @@
+package com.enihsyou.shane.stockfile;
+
 import javax.swing.*;
 import java.io.BufferedWriter;
 import java.io.IOException;

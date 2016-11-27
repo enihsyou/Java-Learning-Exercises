@@ -1,3 +1,5 @@
+package com.enihsyou.shane.stockfile;
+
 public class StockItem{
     private String name;
     private String id;
