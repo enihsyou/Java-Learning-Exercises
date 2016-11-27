@@ -2,9 +2,8 @@ package com.enihsyou.shane.stockfile;
 
 import javax.swing.*;
 
-public class Main {
+public class StockFile {
     public static void main(String[] args){
-
         /*启动GUI线程*/
         SwingUtilities.invokeLater(() -> {
             JFrame frame = new JFrame("StockFile");

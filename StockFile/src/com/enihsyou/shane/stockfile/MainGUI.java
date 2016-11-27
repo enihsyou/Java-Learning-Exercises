@@ -98,11 +98,11 @@ public class MainGUI extends JPanel {
                 //再创建新的
                 try (Stream<String> lines = Files.lines(openFile)) {
                     lines.filter(s -> s.matches("^\\d+\t.+$")) //添加一层检测
-                            .forEach(s -> {
-                        stockText.append(s + lineSeparator);
-                        String[] read = s.split("\t");
-                        stocks.addStock(new StockItem(read[0], read[1]));//新建对象
-                    });
+                         .forEach(s -> {
+                             stockText.append(s + lineSeparator);
+                             String[] read = s.split("\t");
+                             stocks.addStock(new StockItem(read[0], read[1]));//新建对象
+                         });
                     LOGGER.fine(String.format("导入了%d个", stocks.getStocks().size()));
                 } catch (IOException e1) {
                     LOGGER.severe(e1.getMessage());
@@ -174,6 +174,3 @@ public class MainGUI extends JPanel {
         });
     }
 }
-
-
-

@@ -8,18 +8,18 @@ import java.net.URL;
 import java.util.Iterator;
 import java.util.Map;
 
-public class StockJsonParser {
+class StockJsonParser {
     private URL url;
     private ObjectMapper mapper;
     private JsonNode root;
 
-    public StockJsonParser(URL url) throws IOException {
+    StockJsonParser(URL url) {
         this.url = url;
         mapper = new ObjectMapper();
-        root = mapper.readTree(url);
     }
 
-    StockList parse() {
+    StockList parse() throws IOException {
+        root = mapper.readTree(url);
         StockList fileList = new StockList();
         for (Iterator<Map.Entry<String, JsonNode>> it = root.fields(); it.hasNext(); ) {
             Map.Entry<String, JsonNode> record = it.next();
@@ -40,10 +40,6 @@ public class StockJsonParser {
      */
     private static String removePrefix(String raw, int number) {
         return raw.substring(number, raw.length());
-    }
-
-    JsonNode getRoot() {
-        return root;
     }
 
     private String removePrefix(String raw, String prefix) {
