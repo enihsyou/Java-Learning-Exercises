@@ -25,7 +25,7 @@ public class MainGUI extends JPanel {
             FileHandler fileHandler = new FileHandler(MainGUI.class.getName() + ".log", true);
             fileHandler.setFormatter(new SimpleFormatter());
             LOGGER.addHandler(fileHandler);
-        } catch (IOException ignored) {}
+        } catch (IOException e1) {LOGGER.severe(e1.getMessage());}
         LOGGER.setLevel(Level.ALL);
     }
 
@@ -48,8 +48,9 @@ public class MainGUI extends JPanel {
         /*添加监听器*/
         //代码输入框 直接进入下一个输入框
         stockIDTextField.addActionListener(e -> {
-            LOGGER.fine("确认代码输入框");
+            LOGGER.fine("按下按钮 确认代码输入框");
             stockNameTextField.grabFocus();//转到下一个输入框
+            stockNameTextField.selectAll();//全选
         });
         stockIDTextField.setDocument(new PlainDocument() {  //限制输入内容 并提供不怎么样的自动完成
             private int limit = 6;
@@ -79,7 +80,7 @@ public class MainGUI extends JPanel {
 
         //名字输入框 确认操作 执行添加按钮动作
         stockNameTextField.addActionListener(e -> {
-            LOGGER.fine("确认名字输入框");
+            LOGGER.fine("按下按钮 确认名字输入框");
             addButton.getActionListeners()[0].actionPerformed(e);//调用动作
         });
 
@@ -94,15 +95,18 @@ public class MainGUI extends JPanel {
                 //先清空
                 stocks = new StockList();
                 stockText.setText("");
-                //在创建新的
+                //再创建新的
                 try (Stream<String> lines = Files.lines(openFile)) {
-                    lines.forEach(s -> {
+                    lines.filter(s -> s.matches("^\\d+\t.+$")) //添加一层检测
+                            .forEach(s -> {
                         stockText.append(s + lineSeparator);
                         String[] read = s.split("\t");
-                        stocks.addStock(new StockItem(read[0], read[1]));
+                        stocks.addStock(new StockItem(read[0], read[1]));//新建对象
                     });
                     LOGGER.fine(String.format("导入了%d个", stocks.getStocks().size()));
-                } catch (IOException ignored) {}
+                } catch (IOException e1) {
+                    LOGGER.severe(e1.getMessage());
+                }
             }
         });
 
@@ -123,7 +127,7 @@ public class MainGUI extends JPanel {
                 }
                 LOGGER.fine(String.format("获取了%d个，用时%dms", stockList.getStocks().size(),
                         System.currentTimeMillis() - startTime));
-            } catch (IOException ignored) {}
+            } catch (IOException e1) {LOGGER.severe(e1.getMessage());}
         }).start());
 
         //添加按钮
@@ -133,8 +137,8 @@ public class MainGUI extends JPanel {
 
             try {
                 StockItem newItem = new StockItem(inputStockID, inputStockName); //创建对象
-                boolean added = stocks.addStock(newItem); //添加对象
-                if (added) {
+                boolean isAdded = stocks.addStock(newItem); //添加对象
+                if (isAdded) {
                     stockText.append(newItem.toString()); //修改文本域
                     stockText.append(lineSeparator);
                 } else {
@@ -164,13 +168,9 @@ public class MainGUI extends JPanel {
                 //    writer.write(stock.toString());
                 //    writer.newLine();
                 //}
-                stockText.getText().chars().forEach((c) -> {
-                    try {
-                        writer.write(c);
-                    } catch (IOException ignored) {}
-                });
+                writer.write(stockText.getText());
                 JOptionPane.showMessageDialog(GUI, "保存成功");
-            } catch (IOException ignored) {}
+            } catch (IOException e2) {LOGGER.severe(e2.getMessage());}
         });
     }
 }
