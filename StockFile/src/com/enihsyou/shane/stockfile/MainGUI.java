@@ -1,5 +1,7 @@
 package com.enihsyou.shane.stockfile;
 
+import com.fasterxml.jackson.core.JsonParseException;
+
 import javax.swing.*;
 import javax.swing.text.AttributeSet;
 import javax.swing.text.BadLocationException;
@@ -25,7 +27,10 @@ public class MainGUI extends JPanel {
             FileHandler fileHandler = new FileHandler(MainGUI.class.getName() + ".log", true);
             fileHandler.setFormatter(new SimpleFormatter());
             LOGGER.addHandler(fileHandler);
-        } catch (IOException e1) {LOGGER.severe(e1.getMessage());}
+        } catch (IOException e1) {
+            JOptionPane.showMessageDialog(null, "日志文件无法生成", "写入失败", JOptionPane.ERROR_MESSAGE);
+            LOGGER.severe(e1.getMessage());
+        }
         LOGGER.setLevel(Level.ALL);
     }
 
@@ -105,6 +110,7 @@ public class MainGUI extends JPanel {
                          });
                     LOGGER.fine(String.format("导入了%d个", stocks.getStocks().size()));
                 } catch (IOException e1) {
+                    JOptionPane.showMessageDialog(GUI, "导入失败，可能是文件选择错误", "导入失败", JOptionPane.ERROR_MESSAGE);
                     LOGGER.severe(e1.getMessage());
                 }
             }
@@ -127,7 +133,13 @@ public class MainGUI extends JPanel {
                 }
                 LOGGER.fine(String.format("获取了%d个，用时%dms", stockList.getStocks().size(),
                         System.currentTimeMillis() - startTime));
-            } catch (IOException e1) {LOGGER.severe(e1.getMessage());}
+            } catch (JsonParseException e1) {
+                JOptionPane.showMessageDialog(GUI, "获取失败，API失效", "获取失败", JOptionPane.ERROR_MESSAGE);
+                LOGGER.severe(e1.getMessage());
+            } catch (IOException e1) {
+                JOptionPane.showMessageDialog(GUI, "获取失败，或许是网络错误", "获取失败", JOptionPane.ERROR_MESSAGE);
+                LOGGER.severe(e1.getMessage());
+            }
         }).start());
 
         //添加按钮
@@ -170,7 +182,10 @@ public class MainGUI extends JPanel {
                 //}
                 writer.write(stockText.getText());
                 JOptionPane.showMessageDialog(GUI, "保存成功");
-            } catch (IOException e2) {LOGGER.severe(e2.getMessage());}
+            } catch (IOException e2) {
+                JOptionPane.showMessageDialog(GUI, "写入失败，严重错误！", "写入失败", JOptionPane.ERROR_MESSAGE);
+                LOGGER.severe(e2.getMessage());
+            }
         });
     }
 }
