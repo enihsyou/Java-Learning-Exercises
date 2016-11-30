@@ -27,6 +27,7 @@ public class MainGUI extends JPanel {
             FileHandler fileHandler = new FileHandler(MainGUI.class.getName() + ".log", true);
             fileHandler.setFormatter(new SimpleFormatter());
             LOGGER.addHandler(fileHandler);
+            LOGGER.info(MainGUI.class.getName() + " Starting");
         } catch (IOException e1) {
             JOptionPane.showMessageDialog(null, "日志文件无法生成", "写入失败", JOptionPane.ERROR_MESSAGE);
             LOGGER.severe(e1.getMessage());
