@@ -1,4 +1,4 @@
-package com.enihsyou.shane.beatbox;
+package com.enihsyou.shane.photogallery;
 
 import android.os.Bundle;
 import android.support.annotation.LayoutRes;
