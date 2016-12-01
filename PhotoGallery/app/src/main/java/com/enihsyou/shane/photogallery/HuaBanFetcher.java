@@ -2,7 +2,6 @@ package com.enihsyou.shane.photogallery;
 
 import android.net.Uri;
 import android.util.Log;
-import okhttp3.OkHttpClient;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -24,7 +23,7 @@ public class HuaBanFetcher {
             String url = Uri.parse("http://huaban.com/all/")
                     .buildUpon()
                     // .appendQueryParameter("since", "940074419")
-                    .appendQueryParameter("limit", "10")
+                    .appendQueryParameter("limit", "100")
                     .build()
                     .toString();
             String jsonString = getUrlString(url);
@@ -45,7 +44,6 @@ public class HuaBanFetcher {
 
     public byte[] getUrlBytes(String urlSpec) throws IOException {
         URL url = new URL(urlSpec);
-        OkHttpClient client = new OkHttpClient();
         HttpURLConnection connection = (HttpURLConnection) url.openConnection();
         connection.setRequestProperty("X-Requested-With", "XMLHttpRequest");
         try {

@@ -1,9 +1,12 @@
 package com.enihsyou.shane.photogallery;
 
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
@@ -35,8 +38,15 @@ public class PhotoGalleryFragment extends Fragment {
         super.onCreate(savedInstanceState);
         setRetainInstance(true);
         new FetchItemsTask().execute();
-
-        mPhotoHolderThumbnailDownloader = new ThumbnailDownloader<>();
+        Handler responseHandler = new Handler();
+        mPhotoHolderThumbnailDownloader = new ThumbnailDownloader<>(responseHandler);
+        mPhotoHolderThumbnailDownloader.setThumbnailDownloadListener(new ThumbnailDownloader.ThumbnailDownloadListener<PhotoHolder>() {
+            @Override
+            public void onThumbnailDownloaded(PhotoHolder target, Bitmap thumbnail) {
+                Drawable drawable = new BitmapDrawable(getResources(), thumbnail);
+                target.bindDrawable(drawable);
+            }
+        });
         mPhotoHolderThumbnailDownloader.start();
         mPhotoHolderThumbnailDownloader.getLooper();
         Log.i(TAG, "onCreate: Background thread started");
@@ -56,17 +66,23 @@ public class PhotoGalleryFragment extends Fragment {
         return view;
     }
 
+    private void setupAdapter() {
+        if (isAdded()) {
+            mPhotoRecyclerView.setAdapter(new PhotoAdapter(mItems));
+        }
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        mPhotoHolderThumbnailDownloader.clearQueue();
+    }
+
     @Override
     public void onDestroy() {
         super.onDestroy();
         mPhotoHolderThumbnailDownloader.quit();
         Log.i(TAG, "onDestroy: Background thread destroyed");
-    }
-
-    private void setupAdapter() {
-        if (isAdded()) {
-            mPhotoRecyclerView.setAdapter(new PhotoAdapter(mItems));
-        }
     }
 
     private class FetchItemsTask extends AsyncTask<Void, Void, List<GalleryItem>> {
@@ -129,6 +145,4 @@ public class PhotoGalleryFragment extends Fragment {
             return mGalleryItems.size();
         }
     }
-
-
 }
