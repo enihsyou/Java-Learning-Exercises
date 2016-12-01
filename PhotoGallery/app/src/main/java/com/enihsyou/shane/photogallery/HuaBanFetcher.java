@@ -16,16 +16,14 @@ import java.util.List;
 
 public class HuaBanFetcher {
     private static final String TAG = "HuaBanFetcher";
+    private static final String FETCH_METHOD = "all";
+    private static final String SEARCH_METHOD = "search";
+    private static final Uri ENDPOINT = Uri.parse("http://huaban.com/");
 
-    public List<GalleryItem> fetchItems() {
+    public List<GalleryItem> downloadGalleryItems(String url) {
         List<GalleryItem> items = new ArrayList<>();
         try {
-            String url = Uri.parse("http://huaban.com/all/")
-                    .buildUpon()
-                    // .appendQueryParameter("since", "940074419")
-                    .appendQueryParameter("limit", "100")
-                    .build()
-                    .toString();
+
             String jsonString = getUrlString(url);
             Log.i(TAG, "doInBackground: Received JSON: " + jsonString);
             JSONObject jsonBody = new JSONObject(jsonString);
@@ -33,7 +31,7 @@ public class HuaBanFetcher {
         } catch (IOException e) {
             Log.e(TAG, "doInBackground: Failed to fetch items: ", e);
         } catch (JSONException e) {
-            Log.e(TAG, "fetchItems: Failed to parse JSON", e);
+            Log.e(TAG, "downloadGalleryItems: Failed to parse JSON", e);
         }
         return items;
     }
@@ -78,5 +76,23 @@ public class HuaBanFetcher {
             item.setUrl(url);
             items.add(item);
         }
+    }
+
+    private String buildUrl(String method, String query) {
+        Uri.Builder builder = ENDPOINT.buildUpon();
+        if (method.equals(SEARCH_METHOD)){
+            builder.appendPath(SEARCH_METHOD).appendQueryParameter("q", query);
+        } else if (method.equals(FETCH_METHOD)) {
+            builder.appendPath(FETCH_METHOD);
+        }
+        return builder.build().toString();
+    }
+    public List<GalleryItem> fetchRecentPhotos() {
+        String url = buildUrl(FETCH_METHOD, null);
+        return downloadGalleryItems(url);
+    }
+    public List<GalleryItem> searchPhotos(String query){
+        String url = buildUrl(SEARCH_METHOD, query);
+        return downloadGalleryItems(url);
     }
 }

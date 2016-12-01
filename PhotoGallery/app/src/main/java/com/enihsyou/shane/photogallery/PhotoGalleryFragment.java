@@ -88,7 +88,13 @@ public class PhotoGalleryFragment extends Fragment {
     private class FetchItemsTask extends AsyncTask<Void, Void, List<GalleryItem>> {
         @Override
         protected List<GalleryItem> doInBackground(Void... voids) {
-            return new HuaBanFetcher().fetchItems();
+            // return new HuaBanFetcher().downloadGalleryItems();
+            String query = "apple";
+            if (query == null) {
+                return new HuaBanFetcher().fetchRecentPhotos();
+            } else {
+                return new HuaBanFetcher().searchPhotos(query);
+            }
         }
 
         @Override
@@ -146,3 +152,4 @@ public class PhotoGalleryFragment extends Fragment {
         }
     }
 }
+
