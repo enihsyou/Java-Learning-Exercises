@@ -21,8 +21,8 @@ public class GalleryItem {
         return mUrl;
     }
 
-    public void setUrl(String url) {
-        mUrl = url;
+    public void setUrl(String urlPattern) {
+        mUrl = "http://img.hb.aicdn.com/" + urlPattern;
     }
 
     private String mId;
