@@ -23,7 +23,6 @@ public class HuaBanFetcher {
     public List<GalleryItem> downloadGalleryItems(String url) {
         List<GalleryItem> items = new ArrayList<>();
         try {
-
             String jsonString = getUrlString(url);
             Log.i(TAG, "doInBackground: Received JSON: " + jsonString);
             JSONObject jsonBody = new JSONObject(jsonString);
