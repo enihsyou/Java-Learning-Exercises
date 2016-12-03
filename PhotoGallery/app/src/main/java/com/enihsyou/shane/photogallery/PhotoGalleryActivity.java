@@ -1,5 +1,8 @@
 package com.enihsyou.shane.photogallery;
 
+import android.content.Context;
+import android.content.Intent;
+
 public class PhotoGalleryActivity extends SingleFragmentActivity {
 
     @Override
@@ -7,4 +10,7 @@ public class PhotoGalleryActivity extends SingleFragmentActivity {
         return PhotoGalleryFragment.newInstance();
     }
 
+    public static Intent newIntent(Context context) {
+        return new Intent(context, PhotoGalleryActivity.class);
+    }
 }

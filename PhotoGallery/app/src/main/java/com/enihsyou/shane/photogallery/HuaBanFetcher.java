@@ -20,6 +20,11 @@ public class HuaBanFetcher {
     private static final String SEARCH_METHOD = "search";
     private static final Uri ENDPOINT = Uri.parse("http://huaban.com/");
 
+    public List<GalleryItem> fetchRecentPhotos() {
+        String url = buildUrl(FETCH_METHOD, null);
+        return downloadGalleryItems(url);
+    }
+
     public List<GalleryItem> downloadGalleryItems(String url) {
         List<GalleryItem> items = new ArrayList<>();
         try {
@@ -79,18 +84,16 @@ public class HuaBanFetcher {
 
     private String buildUrl(String method, String query) {
         Uri.Builder builder = ENDPOINT.buildUpon();
-        if (method.equals(SEARCH_METHOD)){
+        if (method.equals(SEARCH_METHOD)) {
             builder.appendPath(SEARCH_METHOD).appendQueryParameter("q", query);
         } else if (method.equals(FETCH_METHOD)) {
             builder.appendPath(FETCH_METHOD);
         }
         return builder.build().toString();
     }
-    public List<GalleryItem> fetchRecentPhotos() {
-        String url = buildUrl(FETCH_METHOD, null);
-        return downloadGalleryItems(url);
-    }
-    public List<GalleryItem> searchPhotos(String query){
+
+    public List<GalleryItem> searchPhotos(String query) {
+        if (query.isEmpty()) query = "R-18";
         String url = buildUrl(SEARCH_METHOD, query);
         return downloadGalleryItems(url);
     }
